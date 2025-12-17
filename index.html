@@ -192,9 +192,48 @@
 .info-container p { margin-bottom: 15px; }
 .math-box { background: #f8fafc; border-left: 4px solid var(--accent); padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
 .math-formula { font-family: monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: #0f172a; }
+
+/* --- ROTATING LOGO & INTRO --- */
+.rotating-logo {
+    position: fixed;
+    top: 15px;
+    right: 25px; /* Adjusts position to top-right */
+    width: 60px; /* Size of the logo */
+    height: 60px;
+    z-index: 2000; /* Ensures it stays on top of everything except intro */
+    animation: spinLogo 8s linear infinite;
+    border-radius: 50%; /* Optional: makes it circular */
+}
+
+@keyframes spinLogo { 
+    100% { transform: rotate(360deg); } 
+}
+
+#intro-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #000;
+    z-index: 9999;
+    display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.5s ease; /* Adds smooth fade out */
+}
     </style>
 </head>
 <body>
+<!-- INTRO LAYER -->
+<div id="intro-screen">
+    <video id="introVid" muted playsinline>
+        <source src="intro.mp4" type="video/mp4">
+    </video>
+    <!-- Fallback Button if browser blocks autoplay -->
+    <button id="startBtn" onclick="closeIntro()" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); padding:15px 30px; font-size:1.2rem; background:#2563eb; color:white; border:none; border-radius:8px; cursor:pointer; z-index:10001; font-family:sans-serif;">
+        ?? Click to Start App
+    </button>
+</div>
+
+<!-- ROTATING LOGO -->
+<img src="BMX10.png" class="rotating-logo" alt="BizMitra Logo">
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -496,6 +535,40 @@
 
     <!-- LOGIC -->
     <script>
+// --- ROBUST INTRO VIDEO LOGIC ---
+window.addEventListener('load', function() {
+    const vid = document.getElementById("introVid");
+    const screen = document.getElementById("intro-screen");
+    const btn = document.getElementById("startBtn");
+
+    // Function to close intro
+    window.closeIntro = function() {
+        screen.style.opacity = '0';
+        setTimeout(() => { screen.style.display = "none"; }, 500); // Smooth fade out
+    };
+
+    // 1. Try to play automatically
+    const playPromise = vid.play();
+
+    if (playPromise !== undefined) {
+        playPromise.then(_ => {
+            // Autoplay started successfully!
+        })
+        .catch(error => {
+            // Autoplay was BLOCKED by browser. Show the Start button.
+            console.log("Autoplay blocked. Waiting for user interaction.");
+            btn.style.display = "block";
+        });
+    }
+
+    // 2. When video finishes, close screen
+    vid.onended = function() {
+        closeIntro();
+    };
+
+    // 3. Safety Fallback: Close after 10 seconds anyway
+    setTimeout(() => { if(screen.style.display !== 'none') closeIntro(); }, 10000);
+});
         // --- 1. FULL DATABASE (100 ITEMS) ---
         const database = [
             // RETAIL

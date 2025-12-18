@@ -105,6 +105,20 @@
         font-size: 0.9rem !important;
     }
 }
+.help-tip {
+            cursor: help;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            margin-left: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
     </style>
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
@@ -249,9 +263,9 @@
         <div id="reportContainer" style="display:none;">
             <div class="header-panel"><div><h1 id="rptTitle">Name</h1><div class="status-badge" id="rptSubtitle">Loc</div></div><button class="print-btn" onclick="window.print()" style="padding:10px;background:#334155;color:white;border:none;">Print</button></div>
             <div class="grid-container">
-                <div class="score-card card"><div class="score-val" id="bfiScore">0</div><div class="score-label">Feasibility Score</div><p id="bfiMsg" style="margin-top:10px;font-weight:bold;"></p></div>
-                <div class="card"><div style="font-size:0.8rem;font-weight:bold;color:#64748b;">EST. INVESTMENT</div><div style="font-size:1.5rem;font-weight:bold;" id="reqInv">?0</div><div style="font-size:0.8rem;font-weight:bold;color:#64748b;margin-top:15px;">MONTHLY NET PROFIT</div><div style="font-size:1.5rem;font-weight:bold;color:#10b981;" id="estProfit">?0</div></div>
-                <div class="card"><div style="font-size:0.8rem;font-weight:bold;color:#64748b;">CAPITAL STATUS</div><div style="font-size:1.2rem;font-weight:bold;" id="capStatus">...</div><div style="font-size:0.8rem;font-weight:bold;color:#64748b;margin-top:15px;">BREAK-EVEN</div><div style="font-size:1.2rem;font-weight:bold;" id="breakEven">0 Months</div></div>
+                <div class="score-card card"><div class="score-val" id="bfiScore">0</div><div class="score-label">Feasibility Score <span class="help-tip" title="A health check (0-100) based on your funds, skill, and business risk. Higher is safer.">?</span></div><p id="bfiMsg" style="margin-top:10px;font-weight:bold;"></p></div>
+                <div class="card"><div style="font-size:0.8rem;font-weight:bold;color:#64748b;">EST. INVESTMENT <span class="help-tip" title="Total money needed for Cart/Shop, Rent Deposit, and opening stock.">?</span></div><div style="font-size:1.5rem;font-weight:bold;" id="reqInv">?0</div><div style="font-size:0.8rem;font-weight:bold;color:#64748b;margin-top:15px;">MONTHLY NET PROFIT <span class="help-tip" title="Pure 'take-home' money left in your pocket after paying all bills, rent, staff, and materials.">?</span></div><div style="font-size:1.5rem;font-weight:bold;color:#10b981;" id="estProfit">?0</div></div>
+                <div class="card"><div style="font-size:0.8rem;font-weight:bold;color:#64748b;">CAPITAL STATUS <span class="help-tip" title="Tells you if your current budget is enough to start this business today.">?</span></div><div style="font-size:1.2rem;font-weight:bold;" id="capStatus">...</div><div style="font-size:0.8rem;font-weight:bold;color:#64748b;margin-top:15px;">BREAK-EVEN <span class="help-tip" title="The specific month when your business stops using your personal savings and starts paying its own bills.">?</span></div><div style="font-size:1.2rem;font-weight:bold;" id="breakEven">0 Months</div></div>
 
 <div class="card" style="border-top:5px solid #10b981;">
     <div style="font-size:0.8rem;font-weight:bold;color:#64748b;">FINANCIAL RATIOS</div>

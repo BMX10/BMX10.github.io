@@ -66,6 +66,45 @@
         
         @media (max-width:1000px) { .sidebar { position:relative; width:100%; height:auto; } .main-content { margin-left:0; } .data-row { flex-direction:column; } }
         @media print { .sidebar, .print-btn, .tools-area { display:none; } .main-content { margin:0; padding:0; } }
+
+
+
+
+/* --- MOBILE FIX FOR INTRO VIDEO --- */
+
+/* 1. Force video to fit inside screen without cutting off (Letterbox mode) */
+#introVid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important; /* Key fix: Prevents zooming/cropping */
+}
+
+/* 2. Ensure Buttons stay visible and sized correctly on Mobile */
+#intro-screen {
+    background-color: #000 !important; /* Black background for letterbox bars */
+}
+
+@media (max-width: 768px) {
+    #playBtn {
+        font-size: 1.1rem !important; /* Smaller text on mobile */
+        padding: 15px 30px !important; /* Smaller button padding */
+        width: auto !important;
+        max-width: 80%; /* Prevents button from going off screen */
+        z-index: 100001; /* Keeps button on top of video */
+        position: relative; /* Ensures clickability */
+    }
+    
+    /* Adjust Skip button position for mobile safe areas */
+    #intro-screen button[onclick="skipIntro()"] {
+        top: 30px !important;
+        right: 20px !important;
+        padding: 8px 15px !important;
+        font-size: 0.9rem !important;
+    }
+}
     </style>
 </head>
 <body>

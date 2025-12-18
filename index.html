@@ -165,7 +165,7 @@
         <div class="input-group">
             <label>1. Category Filter</label>
             <select id="catSelect" onchange="filterBizDropdown()">
-                <option value="All">All Categories</option><option value="Retail">Retail</option><option value="Food">Food & Beverage</option>
+                <option value="All">All Categories</option><option value="Street Food">Street Food (Stalls)</option><option value="Retail">Retail</option><option value="Food">Food & Beverage</option>
                 <option value="Service">Services</option><option value="Manufacturing">Manufacturing</option><option value="Online">Online / Digital</option>
                 <option value="Agriculture">Agriculture</option><option value="Education">Education</option>
             </select>
@@ -477,7 +477,16 @@ function checkBudget() {
             {id:97,name:"Poultry",cat:"Agriculture",baseInv:500000,baseOp:40000,margin:0.35,risk:{m:40,o:70,r:30},desc:"Chicken."},
             {id:98,name:"Goat Farm",cat:"Agriculture",baseInv:300000,baseOp:15000,margin:0.45,risk:{m:30,o:50,r:20},desc:"Meat."},
             {id:99,name:"Mushroom",cat:"Agriculture",baseInv:100000,baseOp:10000,margin:0.60,risk:{m:50,o:60,r:10},desc:"Farm."},
-            {id:100,name:"Nursery",cat:"Agriculture",baseInv:200000,baseOp:15000,margin:0.50,risk:{m:30,o:40,r:10},desc:"Plants."}
+            {id:100,name:"Nursery",cat:"Agriculture",baseInv:200000,baseOp:15000,margin:0.50,risk:{m:30,o:40,r:10},desc:"Plants."},
+       
+    { id: 101, name: "Mumbai Vada Pav Stall", cat: "Street Food", baseInv: 60000, baseOp: 15000, margin: 0.50, risk: {m:20, o:60, r:70}, desc: "The lifeline of Mumbai. High volume, low cost." },
+    { id: 102, name: "Roadside Tea Stall", cat: "Street Food", baseInv: 35000, baseOp: 10000, margin: 0.60, risk: {m:20, o:40, r:60}, desc: "Cutting chai & Bun Maska on a cart." },
+    { id: 103, name: "Sandwich/Toast Stall", cat: "Street Food", baseInv: 70000, baseOp: 12000, margin: 0.55, risk: {m:30, o:50, r:50}, desc: "Bombay Masala Toast & Grill sandwiches." },
+    { id: 104, name: "Pani Puri / Chaat", cat: "Street Food", baseInv: 50000, baseOp: 15000, margin: 0.65, risk: {m:30, o:50, r:70}, desc: "Hygiene-focused chaat counter." },
+    { id: 105, name: "Dosa Stall", cat: "Street Food", baseInv: 80000, baseOp: 18000, margin: 0.50, risk: {m:40, o:60, r:50}, desc: "Live Dosa varieties on Tawa." },
+    { id: 106, name: "Frankie / Roll Stall", cat: "Street Food", baseInv: 90000, baseOp: 20000, margin: 0.55, risk: {m:40, o:50, r:50}, desc: "Veg & Non-Veg rolls." },
+    { id: 107, name: "Dabeli Stall", cat: "Street Food", baseInv: 45000, baseOp: 12000, margin: 0.50, risk: {m:40, o:40, r:50}, desc: "Kutch style Dabeli." },
+    { id: 108, name: "Idli / Wada Sambar", cat: "Street Food", baseInv: 60000, baseOp: 15000, margin: 0.60, risk: {m:30, o:50, r:40}, desc: "Morning breakfast cycle/cart." }
         ];
 
 // --- VALIDATION HELPER ---
@@ -661,252 +670,508 @@ if(!isBudgetValid()) return; // <--- ADD THIS LINE HERE
                     <tr><td>Margin</td><td class="${b1.margin>b2.margin?'winner':''}">${(b1.margin*100).toFixed(0)}%</td><td class="${b2.margin>b1.margin?'winner':''}">${(b2.margin*100).toFixed(0)}%</td></tr>
                 </table>`;
         }
-// --- 6. DETAILED REPORT RENDERER (EDUCATIONAL & COMPREHENSIVE) ---
+// --- 6. FINAL DETAILED REPORT (STREET FOOD vs STANDARD SHOP) ---
 function renderDetailedReport(biz, inv, op, tier, state, budget) {
     const container = document.getElementById("detailedReport");
     container.innerHTML = "";
     
-    // Formatting Helpers
     const fmt = (n) => "\u20B9 " + n.toLocaleString('en-IN');
+    const shortfall = inv - budget;
+    const emi = shortfall > 0 ? Math.round(shortfall * 0.0212) : 0;
     
-    // Helper to add sections with text wrapping style
+    // Helper to add sections
     const addSec = (code, title, data) => {
         let html = `<div class="section-block active"><div class="section-title"><span class="section-code">${code}</span> ${title}</div>`;
         data.forEach(d => {
             const num = d.l.match(/^\d+/) ? d.l.match(/^\d+/)[0] : "•";
             const label = d.l.replace(/^\d+[\.\s]*/, "");
-            html += `
-                <div class="data-row">
-                    <div class="data-label"><span>${num}</span> ${label}</div>
-                    <div class="data-value" style="font-size:0.95rem; line-height:1.6;">${d.v}</div>
-                </div>`;
+            html += `<div class="data-row"><div class="data-label"><span>${num}</span> ${label}</div><div class="data-value" style="font-size:0.95rem; line-height:1.6;">${d.v}</div></div>`;
         });
         container.innerHTML += html + "</div>";
     };
 
-    // --- LOGIC & CALCULATIONS ---
+    // =========================================================
+    // 🔴 PART 1: SPECIAL LOGIC FOR "STREET FOOD" (Roadside)
+    // =========================================================
+    if (biz.cat === "Street Food") {
+        
+        // A. IDENTITY
+        addSec("A", "BUSINESS IDENTITY (ROADSIDE SETUP)", [
+            {l:"1. Concept", v:`<strong>${biz.name}</strong> (Street/Cart Model).`},
+            {l:"2. Category", v:"Unorganized Street Food Sector (High Volume)."},
+            {l:"3. Speciality", v:`${biz.desc}. Focus on taste and speed.`},
+            {l:"4. Type", v:"B2C (Direct Cash Sales)."},
+            {l:"5. Model", v:"Offline Only (Standing customers)."},
+            {l:"6. Scale", v:"Nano Enterprise (Self-Employment)."},
+            {l:"7. Entity", v:"Individual Owner (No formal company reg needed)."},
+            {l:"8. Location", v:`High footfall street corner in ${state}.`},
+            {l:"9. Audience", v:"Commuters, Students, Office goers."},
+            {l:"10. Season", v:"All year (Sales drop during heavy rains)."}
+        ]);
+
+        // B. LOCATION
+        addSec("B", "LOCATION & CART SETUP", [
+            {l:"11. Type", v:"Roadside / Footpath / Near Railway Station."},
+            {l:"12. Tier", v:"Tier doesn't matter much; Footfall is King."},
+            {l:"13. Premises", v:"<strong>Mobile Cart (Thela)</strong> or Temporary Folding Stall."},
+            {l:"14. Rent/Fees", v:"Daily Municipal Pauti / Local Charge (Approx \u20B9 100-300/day)."},
+            {l:"15. Deposit", v:"Nil (No landlord involved)."},
+            {l:"16. Agreement", v:"Not Applicable."},
+            {l:"17. Area", v:"Approx 20-30 Sq.ft (Size of the cart)."},
+            {l:"18. Parking", v:"Not required for the cart itself."},
+            {l:"19. Setup", v:"Stainless Steel Counter with overhead Umbrella/Sheet."}
+        ]);
+
+        // C. LEGAL
+        addSec("C", "LEGAL & MUNICIPAL COMPLIANCE", [
+            {l:"20. Cost", v:"\u20B9 2,000 - \u20B9 5,000 (Local Management)."},
+            {l:"21. PAN", v:"Personal PAN of the vendor."},
+            {l:"22. TAN", v:"Not Applicable."},
+            {l:"23. Udyam", v:"Recommended (Register as 'Street Vendor')."},
+            {l:"24. GST", v:"Not Required (Turnover usually < 40L)."},
+            {l:"25. Shop Act", v:"Not Applicable for open carts."},
+            {l:"26. FSSAI", v:"<strong>FSSAI Registration (Petty Food Business)</strong> is Mandatory."},
+            {l:"27. License", v:"<strong>Street Vendor Certificate (TVC)</strong> under PM SVANidhi."},
+            {l:"28. Factory", v:"NA"}, {l:"29. Pollution", v:"NA"},
+            {l:"30. Fire", v:"Keep a small portable Fire Extinguisher (Safety)."},
+            {l:"31. Prof Tax", v:"NA"}, {l:"32. IEC", v:"NA"},
+            {l:"33. Rules", v:"Do not block traffic. Maintain dustbins."}
+        ]);
+
+        // D. DOCS
+        addSec("D", "DOCUMENTATION", [
+            {l:"34. Aadhaar", v:"Must be linked to Mobile number."},
+            {l:"35. PAN", v:"Required for Bank Account."},
+            {l:"36. Address", v:"Home Electricity Bill/Ration Card."},
+            {l:"37. Vending Cert", v:"Letter of Recommendation (LoR) from Municipality (For Loan)."},
+            {l:"38. Bank", v:"Savings Account linked to UPI."},
+            {l:"39. Photos", v:"Passport Size."},
+            {l:"40. Deed", v:"NA"}, {l:"41. DPR", v:"NA"},
+            {l:"42. KYC", v:"Basic KYC for PM SVANidhi Loan."}
+        ]);
+
+        // E. CAPITAL
+        addSec("E", "CAPITAL (LOW INVESTMENT)", [
+            {l:"44. Total", v:`<strong>${fmt(inv)}</strong> (Estimated Setup Cost).`},
+            {l:"45. Cart Cost", v:"\u20B9 25,000 - 40,000 (Custom SS Cart with Wheels)."},
+            {l:"46. Utensils", v:"\u20B9 5,000 (Tawa, Big Vessels, Plates)."},
+            {l:"47. Stove/Gas", v:"\u20B9 5,000 (Commercial Cylinder Deposit + Burner)."},
+            {l:"48. Lighting", v:"\u20B9 2,000 (Battery LED or Shared Connection)."},
+            {l:"49. Stock", v:"\u20B9 5,000 (First week raw material)."},
+            {l:"50. Branding", v:"\u20B9 2,000 (Vinyl Sticker Name on Cart)."},
+            {l:"51. Disposables", v:"\u20B9 2,000 (Paper plates, newspapers, napkins)."},
+            {l:"52. Reserve", v:"\u20B9 5,000 (Cash flow for change)."},
+            {l:"53. Marketing", v:"\u20B9 0 (Location is the only marketing)."},
+            {l:"54. License", v:"\u20B9 2,000 (FSSAI Agent fees)."},
+            {l:"55. Buffer", v:"Remaining amount for emergencies."}
+        ]);
+
+        // F. MACHINERY
+        addSec("F", "EQUIPMENT", [
+            {l:"56. Main", v:"Custom Fabricated Cart (Thela)."},
+            {l:"57. Cooking", v:"High-pressure Gas Burner / Sigdi (Coal)."},
+            {l:"58. Power", v:"Battery operated Lights."},
+            {l:"59. Install", v:"Self-setup."},
+            {l:"60. Maint", v:"Cart wheel greasing / Gas pipe check."},
+            {l:"61. Spares", v:"Extra Gas Regulator / Lighter."},
+            {l:"62. Life", v:"Cart lasts 3-5 years with repair."}
+        ]);
+
+        // G. HR
+        addSec("G", "MANPOWER", [
+            {l:"63. Staff", v:"Self (Owner) + 1 Helper (Chotu/Boy)."},
+            {l:"64. Role", v:"Owner cooks/serves. Helper washes dishes/cleans."},
+            {l:"65. Salary", v:"\u20B9 6,000 - \u20B9 9,000 for Helper."},
+            {l:"66. Manager", v:"<strong>Not Required.</strong> Owner manages everything."},
+            {l:"67. Training", v:"Basic hygiene and speed training."},
+            {l:"68. Hiring", v:"Village reference / Local contact."},
+            {l:"69. Welfare", v:"Food and tea provided to helper."},
+            {l:"70. Laws", v:"Informal sector (Daily wages usually)."}
+        ]);
+
+        // H. OPEX
+        addSec("H", "DAILY/MONTHLY EXPENSES", [
+            {l:"71. Rent/Fees", v:"\u20B9 100 - 300 daily (Local municipal/mgmt charges)."},
+            {l:"72. Gas/Fuel", v:"\u20B9 1,800 per cylinder (Lasts ~1 week)."},
+            {l:"73. Raw Material", v:"Daily purchase from wholesale market."},
+            {l:"74. Water", v:"\u20B9 50 daily (Commercial Jars for cooking/drinking)."},
+            {l:"75. Transport", v:"\u20B9 100 daily (Auto/Tempo for material)."},
+            {l:"76. Disposables", v:"\u20B9 200 daily (Plates/Cups)."},
+            {l:"77. Electricity", v:"\u20B9 500/month (Fixed charge if shared)."},
+            {l:"78. Wastage", v:"Expect 5% food wastage daily."},
+            {l:"79. Mobile", v:"\u20B9 300/month (Data for UPI payments)."},
+            {l:"80. Cleaning", v:"Soap/Cloth costs."},
+            {l:"81. Total", v:"Approx \u20B9 15k - 20k monthly overheads."}
+        ]);
+
+        // I. FINANCE
+        addSec("I", "FINANCE & LOANS", [
+            {l:"82. Funding", v:"Typically 100% Self-funded / Hand loans."},
+            {l:"83. Loan", v:"Available under <strong>PM SVANidhi</strong> Scheme."},
+            {l:"84. Scheme", v:"PM SVANidhi (Street Vendor AtmaNirbhar Nidhi)."},
+            {l:"85. Amount", v:"\u20B9 10,000 (1st Tranche)."},
+            {l:"86. Interest", v:"Subsidized (7% Interest Subsidy)."},
+            {l:"87. Tenure", v:"1 Year repayment."},
+            {l:"88. Collateral", v:"<strong>None.</strong>"},
+            {l:"89. Process", v:"Apply online or via Municipality."},
+            {l:"90. KYC", v:"Aadhaar + Vending Certificate."},
+            {l:"91. Bank", v:"Any Public Sector Bank."}
+        ]);
+
+        // J. SCHEMES
+        addSec("J", "GOVT BENEFITS", [
+            {l:"92. PM SVANidhi", v:"Best scheme specifically for street vendors."},
+            {l:"93. Mudra", v:"Mudra Shishu (< 50k) is also applicable."},
+            {l:"94. Cashback", v:"\u20B9 1,200 yearly cashback on Digital Transactions."},
+            {l:"95. ID Card", v:"Get Street Vendor ID Card from Municipality (Protects from eviction)."}
+        ]);
+
+        // K. MARKETING
+        addSec("K", "MARKETING", [
+            {l:"101. Brand", v:"Cleanliness & Taste is your only brand."},
+            {l:"102. Signage", v:"Clear Rate Card on the Cart (Vinyl)."},
+            {l:"103. Digital", v:"Google Maps Pin (Very important for discovery)."},
+            {l:"104. Social", v:"Ask customers to tag on Insta Stories."},
+            {l:"105. Hygiene", v:"Wear gloves/cap. This attracts the premium crowd."},
+            {l:"106. Offer", v:"Combo deals (e.g., Vada Pav + Chai)."},
+            {l:"107. Sales", v:"Direct to customer (Standing)."},
+            {l:"108. CAC", v:"Zero."},
+            {l:"109. Loyalty", v:"Recognize regular customers."}
+        ]);
+
+        // L. PROFIT
+        addSec("L", "PROFITABILITY", [
+            {l:"110. Pricing", v:"Affordable (\u20B9 15 - \u20B9 50 per item)."},
+            {l:"111. Volume", v:"High Volume game (Target 100+ plates/day)."},
+            {l:"112. Margin", v:"<strong>50% - 60%</strong> Gross Margin (Food cost is low)."},
+            {l:"113. Net Profit", v:"\u20B9 20,000 - \u20B9 40,000 per month (Take home)."},
+            {l:"114. Cash", v:"Instant Cash (No credit given)."},
+            {l:"115. ROI", v:"Full recovery of capital in 3-4 months."},
+            {l:"116. Growth", v:"Expand to 2nd cart in 1 year."},
+            {l:"117. Cycle", v:"Daily rotation of money."}
+        ]);
+
+        // M. RISK
+        addSec("M", "RISKS", [
+            {l:"118. Municipal", v:"Risk of cart confiscation if rules violated."},
+            {l:"119. Hygiene", v:"Food poisoning complaint can kill business."},
+            {l:"120. Weather", v:"Sales drop drastically in Heavy Rains."},
+            {l:"121. Price", v:"Oil/Onion price hike reduces margin temporarily."},
+            {l:"122. Competition", v:"New stall opening right next to you."},
+            {l:"123. Health", v:"Standing all day causes health issues."},
+            {l:"124. Mitigation", v:"Maintain good relations with local authorities."}
+        ]);
+
+        // N. GROWTH
+        addSec("N", "GROWTH", [
+            {l:"125. Scale", v:"Rent a small shop nearby."},
+            {l:"126. Event", v:"Take Party Orders for bulk income."},
+            {l:"127. Online", v:"Register on Zomato/Swiggy (Requires Shop FSSAI)."}
+        ]);
+
+        // O. DIGITAL
+        addSec("O", "DIGITAL", [
+            {l:"131. Payment", v:"QR Code Stand (Paytm/PhonePe) is mandatory."},
+            {l:"132. Soundbox", v:"Audio confirmation box (Prevents fraud)."}
+        ]);
+
+        // P. ESG
+        addSec("P", "SUSTAINABILITY", [
+            {l:"137. Waste", v:"Dustbin attached to cart is mandatory."},
+            {l:"138. Plates", v:"Use Paper/Leaf plates (No Plastic)."},
+            {l:"139. Oil", v:"Do not reuse frying oil > 3 times (Health hazard)."}
+        ]);
+
+        // Q. VERDICT
+        addSec("Q", "VERDICT", [
+            {l:"142. Effort", v:"High Physical Hard work required."},
+            {l:"143. Profit", v:"Excellent Return on Investment."},
+            {l:"144. Risk", v:"Municipal/Legal Risk exists."},
+            {l:"145. Fund", v:"Easily Affordable."},
+            {l:"146. Type", v:"Simple Operation."},
+            {l:"147. Status", v:"Highly Feasible for starters."},
+            {l:"148. GO?", v:"<span style='color:green;font-weight:bold'>GO AHEAD \u2705</span>"}
+        ]);
+        
+        return; // <--- EXIT HERE IF STREET FOOD
+    }
+
+    // =========================================================
+    // 🟢 PART 2: STANDARD LOGIC FOR ALL OTHER BUSINESSES
+    // =========================================================
+    
+    // 1. SMART CONTEXT GENERATOR
+    let text = {
+        tools: "Standard operational tools, safety kits, and cleaning equipment.",
+        machines: "Computers, Office Furniture, Display Racks, and Air Conditioning.",
+        stock: "Initial inventory of finished goods ready for sale.",
+        license: "Shop & Establishment Act (Gumasta License).",
+        waste: "General waste segregation (Wet/Dry) and responsible disposal.",
+        infra: "Standard commercial interior with good lighting."
+    };
+
+    if (biz.cat === "Food") {
+        text.tools = "Utensils, Knives, Packaging Sealer.";
+        text.machines = "Gas Range, Deep Freezers, Mixers.";
+        text.stock = "Raw Ingredients (Grains, Oil, Spices).";
+        text.license = "FSSAI + Fire NOC + Health Trade License.";
+        text.waste = "Wet/Dry segregation.";
+        text.infra = "Kitchen ventilation & Wash area.";
+    } 
+    else if (biz.cat === "Retail") {
+        text.tools = "Barcode Scanner, Tag Gun.";
+        text.machines = "POS Computer, CCTV, AC, Racks.";
+        text.stock = "Finished Goods.";
+        text.license = "Shop & Establishment Act.";
+        text.waste = "Cardboard recycling.";
+        text.infra = "Glass frontage & Shelving.";
+    } 
+    else if (biz.cat === "Manufacturing") {
+        text.tools = "Hand tools, Safety Gear.";
+        text.machines = "Production Line, Motors.";
+        text.stock = "Raw Materials.";
+        text.license = "Factory License + PCB NOC.";
+        text.waste = "Industrial waste disposal.";
+        text.infra = "Industrial Shed & 3-Phase Power.";
+    }
+    
+    // NICHE OVERRIDES (Fix for Xerox/Salon/Gym)
+    let bName = biz.name.toLowerCase();
+    if (bName.includes("xerox") || bName.includes("print")) {
+        text.tools = "Paper Cutters, Staplers (Big/Small), Lamination Kit, Binding Machine.";
+        text.machines = "Heavy Duty Photocopier (Canon/Ricoh), Color Printer, PC, Scanner.";
+        text.stock = "A4/A3 Paper Reams (75gsm), Toner Cartridges, Spiral Coils.";
+        text.waste = "Paper shredding and responsible paper recycling.";
+        text.infra = "Customer Counter, Paper Storage Racks, Inverter Backup.";
+    }
+    else if (bName.includes("salon") || bName.includes("parlour")) {
+        text.tools = "Scissors, Combs, Hair Dryers, Trimmers, Aprons, Towels.";
+        text.machines = "Hydraulic Chairs, Steamers, Shampoo Station, AC, Full-length Mirrors.";
+        text.stock = "Professional Shampoos, Creams, Dyes, Wax, Disposables.";
+        text.infra = "Fancy Lighting, Water Connection, Private section for ladies.";
+    }
+
+    // 2. LOGIC VARIABLES
     const isMetro = tier > 1.5;
     const isRural = tier < 0.8;
     const tierName = isMetro ? "Metro City (Tier 1)" : (isRural ? "Rural / Semi-Urban" : "Tier 2/3 City");
     const rentCost = Math.round(op * 0.4); 
-   const staffSal = isMetro ? "\u20B9 18,000 - 25,000" : (isRural ? "\u20B9 8,000 - 12,000" : "\u20B9 12,000 - 18,000");
-    const shortfall = inv - budget;
-    const emi = shortfall > 0 ? Math.round(shortfall * 0.0212) : 0; // Approx EMI for 5yr @ 10%
+    const staffSal = isMetro ? "\u20B9 18,000 - 25,000" : (isRural ? "\u20B9 8,000 - 12,000" : "\u20B9 12,000 - 18,000");
 
-    // --- SECTION A: BASIC IDENTITY ---
+    // A. IDENTITY
     addSec("A", "BUSINESS IDENTITY & STRATEGY", [
-        {l:"1. Business Name", v:`Proposed Concept: <strong>${biz.name}</strong>. Ensure the name is catchy, easy to spell, and locally relevant. Check availability on the MCA website to avoid trademark conflicts.`},
-        {l:"2. Industry Category", v:`This falls under the <strong>${biz.cat}</strong> sector. This sector is currently seeing steady growth in India due to increasing domestic consumption.`},
-        {l:"3. Niche / Sub-Category", v:`<strong>${biz.desc}</strong>. Focusing on this specific niche will help you differentiate from general competitors.`},
-        {l:"4. Nature of Business", v:"<strong>B2C (Business to Consumer)</strong>. You will be dealing directly with end customers, so customer service and experience are paramount."},
-        {l:"5. Business Model", v:"<strong>Hybrid / Omnichannel</strong>. We recommend a physical presence combined with digital ordering (WhatsApp/Zomato/Website) to maximize reach."},
-        {l:"6. Operational Scale", v:"<strong>Micro Enterprise</strong>. Since investment is below \u20B9 1 Crore, you qualify for MSME benefits under the Micro category."},
-        {l:"7. Legal Entity Type", v:"<strong>Sole Proprietorship</strong> is recommended for starting up due to lower compliance costs. You can upgrade to a Private Limited company once turnover crosses \u20B9 50 Lakhs."},
-        {l:"8. Target Geography", v:`Primary Market: <strong>${state}</strong>. specifically targeting ${tierName} neighborhoods with moderate to high population density.`},
-        {l:"9. Target Audience", v:"Middle-income households and local residents. Focus on the age group 18-45 who value convenience and quality."},
-        {l:"10. Seasonality", v:"This business generally enjoys <strong>Year-round Demand</strong>. However, expect a 20-30% surge in sales during festival seasons (Diwali, New Year)."}
+        {l:"1. Business Name", v:`Proposed Concept: <strong>${biz.name}</strong>. Ensure the name is catchy, easy to spell, and locally relevant.`},
+        {l:"2. Industry Category", v:`This falls under the <strong>${biz.cat}</strong> sector, which is seeing steady demand in India.`},
+        {l:"3. Niche / Sub-Category", v:`<strong>${biz.desc}</strong>. Focusing on this niche helps differentiate you from competitors.`},
+        {l:"4. Nature of Business", v:"<strong>B2C (Business to Consumer)</strong>. You will deal directly with end customers."},
+        {l:"5. Business Model", v:"<strong>Hybrid Model</strong>. Physical location combined with digital orders (WhatsApp/Phone)."},
+        {l:"6. Operational Scale", v:"<strong>Micro Enterprise</strong>. Investment is optimized for this scale."},
+        {l:"7. Legal Entity Type", v:"<strong>Sole Proprietorship</strong> is recommended initially for lower compliance burden."},
+        {l:"8. Target Geography", v:`Primary Market: <strong>${state}</strong>. Targeting ${tierName} neighborhoods.`},
+        {l:"9. Target Audience", v:"Local residents and walk-in customers seeking convenience and quality."},
+        {l:"10. Seasonality", v:"Generally <strong>Year-round Demand</strong>, with potential sales spikes during festivals."}
     ]);
 
-    // --- SECTION B: LOCATION ---
+    // B. LOCATION
     addSec("B", "LOCATION & INFRASTRUCTURE PLANNING", [
-        {l:"11. Location Type", v:biz.cat === "Manufacturing" ? "Industrial Area / MIDC outskirts are preferred to avoid noise complaints and access cheap power." : "High Street / Main Market area with high visibility is crucial for footfall."},
-        {l:"12. City Tier Impact", v:`Selected: <strong>${tierName}</strong>. Costs here are moderate, but customers are price-sensitive. Quality must balance with affordability.`},
-        {l:"13. Land / Premises", v:"<strong>Lease Model Recommended</strong>. Buying property locks up capital. Look for a long-term lease (3-5 years) with a lock-in period of 1 year."},
-        {l:"14. Estimated Rent", v:`Budget approx. <strong>${fmt(rentCost)} per month</strong>. Do not exceed 15% of your projected monthly revenue on rent.`},
-        {l:"15. Rental Deposit", v:`Market standard is 6 months of rent: <strong>${fmt(rentCost * 6)}</strong>. This is refundable but blocks your initial capital.`},
-        {l:"16. Lease Agreement", v:"Ensure a registered Rent Agreement (Notarized). Cost approx \u20B9 3,000. Essential for GST and Bank Loan processing."},
-        {l:"17. Carpet Area", v:biz.cat === "Manufacturing" ? "Minimum 1000-1500 Sq.ft required for machinery and raw material storage." : "300-500 Sq.ft is sufficient. Focus on efficient layout design."},
-        {l:"18. Parking Facility", v:"Critical. 40% of customers may skip your store if 2-wheeler parking is not available nearby."},
-        {l:"19. Visibility Score", v:"High visibility is required. Ensure your signboard is visible from at least 50 meters away."}
+        {l:"11. Location Type", v:biz.cat==="Manufacturing"?"Industrial Area / Outskirts":"High Street / Main Market Area."},
+        {l:"12. City Tier Impact", v:`Selected: <strong>${tierName}</strong>. Costs are adjusted for local rates.`},
+        {l:"13. Land / Premises", v:"<strong>Lease Model Recommended</strong>. Buying property is not capital efficient at this stage."},
+        {l:"14. Estimated Rent", v:`Budget approx. <strong>${fmt(rentCost)} per month</strong> based on location tier.`},
+        {l:"15. Rental Deposit", v:`Market standard is 6 months rent: <strong>${fmt(rentCost * 6)}</strong> (Refundable).`},
+        {l:"16. Lease Agreement", v:"Registered Rent Agreement (Notarized). Cost approx \u20B9 3,000."},
+        {l:"17. Carpet Area", v:biz.cat==="Manufacturing"?"1000+ sqft":"200-500 sqft Shop/Office."},
+        {l:"18. Parking Facility", v:biz.cat==="Retail"||biz.cat==="Food"?"Essential for customer convenience.":"Optional."},
+        {l:"19. Setup Requirements", v:text.infra}
     ]);
 
-    // --- SECTION C: LEGAL ---
+    // C. LEGAL
     addSec("C", "LEGAL & REGULATORY COMPLIANCE", [
-        {l:"20. Registration Cost", v:"Budget around <strong>\u20B9 5,000 - \u20B9 10,000</strong> for all initial government registrations and agent fees."},
-        {l:"21. PAN Card", v:"For Proprietorship, your <strong>Personal PAN</strong> is used. For Partnership/LLP, a separate Firm PAN is required."},
-        {l:"22. TAN Number", v:"Required only if you deduct TDS (e.g., if you pay rent > \u20B9 50k/month or salaries above taxable limits)."},
-        {l:"23. Udyam Registration", v:"<strong>Mandatory & Free.</strong> This provides you MSME status, access to collateral-free loans, and subsidy schemes."},
-        {l:"24. GST Registration", v:"Mandatory if turnover exceeds \u20B9 40 Lakhs (Goods) or \u20B9 20 Lakhs (Services). Optional initially but recommended for B2B credibility."},
-        {l:"25. Shop & Est. Act", v:"<strong>Gumasta License</strong>. Mandatory for any commercial establishment within municipal limits. Apply within 30 days of starting."},
-        {l:"26. FSSAI License", v:biz.cat === "Food" ? "<strong>Mandatory.</strong> You need a State License/Registration depending on turnover. Critical for food safety compliance." : "Not Applicable for this category."},
-        {l:"27. Trade License", v:"Issued by the local Municipal Corporation (MCD/BMC). Certifies that you are allowed to conduct this trade."},
-        {l:"28. Factory License", v:biz.cat === "Manufacturing" ? "Required if using power with >10 workers. Regulated by the Factories Act." : "Not Applicable."},
-        {l:"29. Pollution Control", v:biz.cat === "Manufacturing" ? "Consent to Establish (CTE) from State Pollution Board is required." : "Exempt / Green Category."},
-        {l:"30. Fire NOC", v:"Required if the premises is larger than 500 sq.ft or involves kitchen/flammable materials."},
-        {l:"31. Professional Tax", v:`Applicable in ${state}. Approx \u20B9 2,500 per year. Deducted from owner and employee salaries.`},
-        {l:"32. IEC Code", v:"Import Export Code. Only required if you plan to export goods or import raw materials directly."},
-        {l:"33. Sector Specific", v:biz.cat === "Education" ? "Affiliation with boards or local education dept norms." : "General commercial laws apply."}
+        {l:"20. Registration Cost", v:"Budget around <strong>\u20B9 5,000 - \u20B9 10,000</strong> for all initial registrations."},
+        {l:"21. PAN Card", v:"Personal PAN of the Proprietor is used."},
+        {l:"22. TAN Number", v:"Required only if you deduct TDS (Rent > 50k or Salaries)."},
+        {l:"23. Udyam Registration", v:"<strong>Mandatory & Free</strong>. Essential for MSME loans and subsidies."},
+        {l:"24. GST Registration", v:"Mandatory if turnover exceeds \u20B9 40L (Goods) or \u20B9 20L (Services)."},
+        {l:"25. Shop & Est. Act", v:"<strong>Gumasta License</strong>. Mandatory for all shops within municipal limits."},
+        {l:"26. Specific License", v:text.license},
+        {l:"27. Trade License", v:"Issued by the local Municipal Corporation."},
+        {l:"28. Factory License", v:biz.cat==="Manufacturing"?"Required under Factories Act":"Not Applicable."},
+        {l:"29. Pollution Control", v:biz.cat==="Manufacturing"?"PCB Consent to Establish":"Exempt Category."},
+        {l:"30. Fire NOC", v:"Required if area > 500 sq.ft or involves kitchen."},
+        {l:"31. Professional Tax", v:`Applicable in ${state}. Approx \u20B9 2,500 per year.`},
+        {l:"32. IEC Code", v:"Only required if you plan to import/export goods."},
+        {l:"33. Sector Rules", v:biz.cat==="Education"?"Local Education Board norms":"General Commercial Laws."}
     ]);
 
-    // --- SECTION D: DOCUMENTATION ---
+    // D. DOCS
     addSec("D", "REQUIRED DOCUMENTATION (KYC)", [
-        {l:"34. Aadhaar Card", v:"Must be linked with your mobile number for OTP verification on Govt portals."},
-        {l:"35. PAN Card", v:"Essential for tax filing and opening a bank account."},
-        {l:"36. Address Proof", v:"Personal: Voter ID/Passport. Business: Electricity Bill of the shop/office."},
-        {l:"37. Rent Agreement", v:"Registered copy on Stamp Paper. Ensure the 'Commercial' usage clause is mentioned."},
-        {l:"38. Utility Bill", v:"Electricity Bill (not older than 3 months) of the business premises."},
-        {l:"39. Bank Proof", v:"Cancelled Cheque or Bank Statement of your Savings account (for initial registration)."},
-        {l:"40. Photographs", v:"Keep 10-15 passport size photos of the proprietor/partners ready."},
-        {l:"41. Partnership Deed", v:"If starting with a partner, a notarized Deed defining profit ratio is mandatory."},
-        {l:"42. Project Report", v:"A detailed <strong>DPR (Detailed Project Report)</strong> containing financial projections is required for Mudra/PMEGP loans."},
-        {l:"43. KYC Norms", v:"Standard CKYC will be done by the bank for the Current Account opening."}
+        {l:"34. Aadhaar Card", v:"Linked with Mobile for OTP verification."},
+        {l:"35. PAN Card", v:"Essential for tax filing and bank account opening."},
+        {l:"36. Address Proof", v:"Electricity Bill of the business premises."},
+        {l:"37. Rent Agreement", v:"Registered copy on Stamp Paper."},
+        {l:"38. Utility Bill", v:"Latest Electricity Bill (not older than 3 months)."},
+        {l:"39. Bank Proof", v:"Cancelled Cheque of Current/Savings Account."},
+        {l:"40. Photographs", v:"10-15 Passport size photos of the proprietor."},
+        {l:"41. Partnership Deed", v:"Only if starting with a partner (Notarized)."},
+        {l:"42. Project Report", v:"Detailed DPR required for Bank Loans."},
+        {l:"43. KYC Norms", v:"Standard CKYC norms apply."}
     ]);
 
-    // --- SECTION E: CAPITAL ---
+    // E. CAPITAL
     addSec("E", "CAPITAL ALLOCATION (BUDGETING)", [
-        {l:"44. Total Project Cost", v:`<strong>${fmt(inv)}</strong>. This is the estimated total fund required to set up the business until launch.`},
-        {l:"45. Rental Deposits", v:`${fmt(rentCost * 6)}. Refundable security deposit for the landlord.`},
-        {l:"46. Interior & Civil", v:`${fmt(Math.round(inv * 0.15))}. Painting, tiling, false ceiling, and electric wiring work.`},
-        {l:"47. Machinery & Assets", v:`${fmt(Math.round(inv * 0.40))}. Core equipment (Computers, Machines, Ovens) required for production/service.`},
-        {l:"48. Tools & Utensils", v:`${fmt(Math.round(inv * 0.05))}. Small tools, kits, or serving utensils.`},
-        {l:"49. Furniture & Fixtures", v:`${fmt(Math.round(inv * 0.10))}. Display racks, counters, tables, and chairs for customers.`},
-        {l:"50. IT & Hardware", v:`${fmt(Math.round(inv * 0.05))}. Billing computer, printer, barcode scanner, and CCTV cameras.`},
-        {l:"51. Software Costs", v:"\u20B9 15,000 (Approx). Lifetime license for Accounting/Billing software (e.g., Tally/Vyapar)."},
-        {l:"52. Opening Stock", v:`${fmt(Math.round(inv * 0.15))}. Initial raw material or inventory required for the first 30 days.`},
-        {l:"53. Marketing & Launch", v:"\u20B9 25,000. Inauguration event, flyers, and initial social media ads."},
-        {l:"54. Licenses & Legal", v:"\u20B9 10,000. Gov fees and consultant charges."},
-        {l:"55. Contingency Fund", v:`${fmt(Math.round(inv * 0.05))}. Emergency cash kept aside for price hikes or delays.`}
+        {l:"44. Total Project Cost", v:`<strong>${fmt(inv)}</strong>. Estimated fund required to launch.`},
+        {l:"45. Rental Deposits", v:`${fmt(rentCost * 6)}. Security deposit for landlord.`},
+        {l:"46. Interior & Civil", v:`${fmt(Math.round(inv * 0.15))}. Paint, tiles, electric wiring.`},
+        {l:"47. Machinery & Assets", v:`${fmt(Math.round(inv * 0.40))}. Core assets: ${text.machines}`},
+        {l:"48. Tools & Utensils", v:`${fmt(Math.round(inv * 0.05))}. Small items: ${text.tools}`},
+        {l:"49. Furniture", v:`${fmt(Math.round(inv * 0.10))}. Racks, counters, chairs.`},
+        {l:"50. IT & Hardware", v:`${fmt(Math.round(inv * 0.05))}. PC, Printer, CCTV.`},
+        {l:"51. Software Costs", v:"\u20B9 15,000 (Approx). Billing/Accounting software license."},
+        {l:"52. Opening Stock", v:`${fmt(Math.round(inv * 0.15))}. First month's stock: ${text.stock}`},
+        {l:"53. Marketing", v:"\u20B9 20,000. Inauguration event and ads."},
+        {l:"54. Legal Fees", v:"\u20B9 10,000. Gov fees and consultant charges."},
+        {l:"55. Contingency Fund", v:`${fmt(Math.round(inv * 0.05))}. Emergency cash buffer.`}
     ]);
 
-    // --- SECTION F: MACHINERY ---
+    // F. MACHINERY
     addSec("F", "MACHINERY & TECHNOLOGY", [
-        {l:"56. Primary Machinery", v:biz.cat === "Food" ? "Commercial Gas Range, Deep Freezers, Mixer Grinders, Exhaust System." : "Computers, Display Units, Air Conditioning, Point of Sale (POS) Terminals."},
-        {l:"57. Capacity Planning", v:"Machines should handle 1.5x your projected daily sales to allow for peak hours."},
-        {l:"58. Power Requirement", v:biz.cat === "Manufacturing" ? "3-Phase Industrial Connection (Load > 10KW)." : "Single Phase Commercial Connection is sufficient."},
-        {l:"59. Installation Cost", v:"Factor in 5% of machine cost for wiring, plumbing, and installation labor."},
-        {l:"60. Maintenance (AMC)", v:"Essential for expensive equipment. Budget 5-8% of asset value annually."},
-        {l:"61. Spare Parts", v:"Keep critical spares (belts, fuses) in stock to avoid production downtime."},
-        {l:"62. Depreciation", v:"Assets lose value over time. Calculate 15% depreciation per year for tax benefits."}
+        {l:"56. Primary Machinery", v:text.machines},
+        {l:"57. Capacity Planning", v:"Should handle 1.5x of projected daily sales."},
+        {l:"58. Power Requirement", v:biz.cat==="Manufacturing"?"3-Phase Industrial":"Single Phase Commercial."},
+        {l:"59. Installation Cost", v:"5% of machine cost (Wiring/Plumbing)."},
+        {l:"60. Maintenance (AMC)", v:"Budget 5-8% of asset value annually for repairs."},
+        {l:"61. Spare Parts", v:"Keep critical consumables/spares in stock."},
+        {l:"62. Depreciation", v:"Assets depreciate @ 15% per year (Tax Benefit)."}
     ]);
 
-    // --- SECTION G: HR ---
+    // G. HR
     addSec("G", "HUMAN RESOURCES (MANPOWER)", [
-        {l:"63. Staff Requirement", v:"Start lean. <strong>2 - 3 Full-time employees</strong> are sufficient for the initial 6 months."},
-        {l:"64. Skill Mix", v:"1 Manager/Cashier (Trustworthy) + 2 Helpers/Staff (Hardworking)."},
-        {l:"65. Salary Range", v:`${staffSal} per month per employee (varies by skill).`},
-        {l:"66. Manager Salary", v:isMetro ? "\u20B9 22,000 - 28,000" : "\u20B9 15,000 - 18,000. Pay higher for experience."},
-        {l:"67. Training", v:"1 week of on-the-job training is required for customer handling and machine usage."},
-        {l:"68. Recruitment Source", v:"Local references, newspaper classifieds, or 'Hiring' poster outside the shop."},
-        {l:"69. Staff Welfare", v:"Budget \u20B9 2,000/month for staff tea/snacks. Happy staff leads to better service."},
-        {l:"70. Labour Compliance", v:"Maintain a Muster Roll (Attendance Register). If >10 staff, PF/ESIC registration becomes mandatory."}
+        {l:"63. Staff Requirement", v:"Start lean. <strong>2 - 3 Full-time employees</strong> initially."},
+        {l:"64. Skill Mix", v:"1 Manager/Cashier + 2 Helpers/Staff."},
+        {l:"65. Salary Range", v:`${staffSal} per month per employee.`},
+        {l:"66. Manager Salary", v:isMetro ? "\u20B9 22,000+" : "\u20B9 15,000+"},
+        {l:"67. Training", v:"1 week on-the-job training required."},
+        {l:"68. Recruitment Source", v:"Local references or 'Hiring' posters."},
+        {l:"69. Staff Welfare", v:"\u20B9 2,000/month for Tea/Snacks."},
+        {l:"70. Labour Compliance", v:"Maintain Muster Roll (Attendance)."}
     ]);
 
-    // --- SECTION H: OPEX ---
+    // H. OPEX
     addSec("H", "MONTHLY OPERATING EXPENSES", [
-        {l:"71. Rent", v:`${fmt(rentCost)}. This is your primary fixed cost.`},
-        {l:"72. Electricity Bill", v:`${fmt(Math.round(op * 0.15))}. Commercial tariff rates apply (higher than residential).`},
-        {l:"73. Water Charges", v:"\u20B9 500 - \u20B9 1,000 (Commercial supply or tanker)."},
-        {l:"74. Internet/Wi-Fi", v:"\u20B9 1,000. High-speed broadband for billing and payments."},
-        {l:"75. Transport/Logistics", v:`${fmt(Math.round(op * 0.10))}. Cost of bringing raw material to the shop.`},
-        {l:"76. Repairs & Maintenance", v:"\u20B9 2,000. Buffer for minor electrical or plumbing fixes."},
-        {l:"77. Consumables", v:"\u20B9 3,000. Cleaning supplies, stationery, printing paper, bags."},
-        {l:"78. Accounting Fees", v:"\u20B9 3,000. Part-time accountant or CA fees for GST filing."},
-        {l:"79. Software Subscription", v:"\u20B9 500. Monthly cost for CRM or Billing software renewals."},
-        {l:"80. Security/Housekeeping", v:"Optional. Can be self-managed or shared cost in a complex."},
-        {l:"81. Insurance Premium", v:"\u20B9 1,000 (Amortized). Fire/Burglary insurance is critical."}
+        {l:"71. Rent", v:fmt(rentCost)},
+        {l:"72. Electricity Bill", v:`${fmt(Math.round(op * 0.15))} (Commercial Rate).`},
+        {l:"73. Water Charges", v:"\u20B9 500 - \u20B9 1,000"},
+        {l:"74. Internet/Wi-Fi", v:"\u20B9 1,000 (Broadband)."},
+        {l:"75. Transport/Logistics", v:`${fmt(Math.round(op * 0.10))} (Sourcing).`},
+        {l:"76. Repairs & Maint", v:"\u20B9 2,000 buffer."},
+        {l:"77. Consumables", v:"\u20B9 3,000"},
+        {l:"78. Accounting Fees", v:"\u20B9 3,000 (Part-time CA)."},
+        {l:"79. Software Sub", v:"\u20B9 500 ( renewals)."},
+        {l:"80. Security", v:"Optional (Self-managed)."},
+        {l:"81. Insurance Premium", v:"\u20B9 1,000 (Amortized)."}
     ]);
 
-    // --- SECTION I: FINANCE ---
+    // I. FINANCE
     addSec("I", "FINANCING & LOAN ELIGIBILITY", [
-        {l:"82. Own Contribution", v:shortfall > 0 ? `You have <strong>${fmt(budget)}</strong> (${Math.round((budget/inv)*100)}%). Banks require 10-25% margin money.` : "100% Self Funded. No bank dependency."},
-        {l:"83. Loan Requirement", v:shortfall > 0 ? `You need a loan of <strong>${fmt(shortfall)}</strong> to close the gap.` : "Nil."},
-        {l:"84. Type of Loan", v:"Term Loan (for Machinery/Furniture) + Cash Credit (for Working Capital)."},
-        {l:"85. Interest Rate", v:"Expect <strong>9% to 11% p.a.</strong> under Govt schemes like Mudra."},
-        {l:"86. Loan Tenure", v:"Typically 5 Years (60 Months) for Term Loans. CC is renewable yearly."},
-        {l:"87. Estimated EMI", v:shortfall > 0 ? `Approx <strong>${fmt(emi)}</strong> per month.` : "Nil"},
-        {l:"88. Collateral", v:shortfall < 1000000 ? "<strong>Not Required</strong> under CGTMSE or Mudra Scheme." : "May be required for higher amounts."},
-        {l:"89. Margin Money", v:"You must invest 20-25% of the total project cost from your own pocket."},
-        {l:"90. Credit Score", v:"A CIBIL Score of <strong>700+</strong> is highly recommended for quick approval."},
-        {l:"91. Preferred Banks", v:"Public Sector Banks (SBI, Canara, PNB, BOB) offer the best MSME rates."}
+        {l:"82. Own Contribution", v:shortfall > 0 ? `You have <strong>${fmt(budget)}</strong>. Margin money required.` : "100% Self Funded."},
+        {l:"83. Loan Requirement", v:shortfall > 0 ? `Loan needed: <strong>${fmt(shortfall)}</strong>.` : "Nil."},
+        {l:"84. Type of Loan", v:"Term Loan (Assets) + Cash Credit (Working Capital)."},
+        {l:"85. Interest Rate", v:"9% to 11% p.a. (Govt Schemes)."},
+        {l:"86. Loan Tenure", v:"5 Years (60 Months)."},
+        {l:"87. Estimated EMI", v:shortfall > 0 ? `Approx <strong>${fmt(emi)}</strong> / month.` : "Nil"},
+        {l:"88. Collateral", v:shortfall < 1000000 ? "Not Required (CGTMSE Cover)." : "May be required."},
+        {l:"89. Margin Money", v:"20-25% of Project Cost from own pocket."},
+        {l:"90. Credit Score", v:"CIBIL 700+ recommended for quick approval."},
+        {l:"91. Preferred Banks", v:"Public Sector Banks (SBI, PNB, BOB, Canara)."}
     ]);
 
-    // --- SECTION J: SCHEMES ---
+    // J. SCHEMES
     addSec("J", "GOVERNMENT SCHEMES (SUBSIDY)", [
-        {l:"92. PMEGP Scheme", v:"<strong>Prime Minister's Employment Generation Programme.</strong> Offers 15-35% Subsidy on project cost. Best for Manufacturing units."},
-        {l:"93. Mudra Shishu", v:"Loan up to \u20B9 50,000. No processing fee. Good for very small starts."},
-        {l:"94. Mudra Kishor", v:"Loan from \u20B9 50,000 to \u20B9 5 Lakhs. Ideal for this business scale."},
-        {l:"95. Mudra Tarun", v:"Loan from \u20B9 5 Lakhs to \u20B9 10 Lakhs. Requires strict scrutiny."},
-        {l:"96. CGTMSE Cover", v:"Credit Guarantee scheme. Govt pays the bank if you default. Enabling this costs 1-2% fee."},
-        {l:"97. Stand-Up India", v:"Exclusive for SC/ST or Women Entrepreneurs. Loans > \u20B9 10 Lakhs."},
-        {l:"98. PMFME Scheme", v:"Specific for Food Processing units. Offers 35% subsidy and technical support."},
-        {l:"99. State Policies", v:`Check ${state} state industrial policy for interest subvention (rebate).`},
-        {l:"100. MSME Databank", v:"Register to get priority in Govt procurement and trade fairs."}
+        {l:"92. PMEGP Scheme", v:"15-35% Subsidy on project cost (Online Application)."},
+        {l:"93. Mudra Shishu", v:"Loan up to \u20B9 50,000 (No Processing Fee)."},
+        {l:"94. Mudra Kishor", v:"Loan \u20B9 50k to \u20B9 5 Lakhs."},
+        {l:"95. Mudra Tarun", v:"Loan \u20B9 5L to \u20B9 10 Lakhs."},
+        {l:"96. CGTMSE Cover", v:"Collateral-free guarantee for bank loans."},
+        {l:"97. Stand-Up India", v:"For SC/ST/Women entrepreneurs (> \u20B9 10L)."},
+        {l:"98. PMFME Scheme", v:"For Food Processing units (35% Subsidy)."},
+        {l:"99. State Policies", v:`Check ${state} industrial policy for interest rebates.`},
+        {l:"100. MSME Databank", v:"Register to get priority in Govt procurement."}
     ]);
 
-    // --- SECTION K: MARKETING ---
+    // K. MARKETING
     addSec("K", "MARKETING & SALES STRATEGY", [
-        {l:"101. Branding", v:"Invest in a professional Logo and a clear, lit-up Signboard. It builds trust."},
-        {l:"102. Design Budget", v:"\u20B9 3,000 - \u20B9 5,000 for logo, menu, and visiting card design."},
-        {l:"103. Website Presence", v:"A Google My Business listing is mandatory. A basic landing page website adds credibility."},
-        {l:"104. Social Media", v:"Create Instagram/Facebook pages. Post photos of your products/shop weekly."},
-        {l:"105. Online Ads", v:"Run Google Local Ads targeting 5km radius. Budget: \u20B9 200/day."},
-        {l:"106. Offline Marketing", v:"Newspaper inserts (Pamphlets) in the local neighborhood are very effective."},
-        {l:"107. Sales Channels", v:"Primary: In-store. Secondary: Delivery apps or WhatsApp orders."},
-        {l:"108. CAC (Acquisition)", v:"Target a Customer Acquisition Cost of < \u20B9 100 per new customer."},
-        {l:"109. Retention", v:"Start a Loyalty Program (e.g., '10th Service Free'). Collect customer phone numbers."}
+        {l:"101. Branding", v:"Professional Logo and Signboard are essential."},
+        {l:"102. Design Budget", v:"\u20B9 5,000."},
+        {l:"103. Website Presence", v:"Google My Business Listing (Mandatory)."},
+        {l:"104. Social Media", v:"Instagram/WhatsApp Status updates."},
+        {l:"105. Online Ads", v:"Google Local Ads (\u20B9 200/day)."},
+        {l:"106. Offline Marketing", v:"Newspaper Pamphlets / Local Banners."},
+        {l:"107. Sales Channels", v:"In-store + Delivery (Zomato/Swiggy if Food)."},
+        {l:"108. CAC (Acquisition)", v:"Target < \u20B9 100 per new customer."},
+        {l:"109. Retention", v:"Loyalty Points / Good Service."}
     ]);
 
-    // --- SECTION L: PROFITABILITY ---
-    const dailySales = Math.round((op * 4.0) / 25);
+    // L. PROFITABILITY
+    const daily = Math.round((op * 4.0) / 25);
     addSec("L", "REVENUE & PROFITABILITY", [
-        {l:"110. Pricing Strategy", v:"Competitive Pricing initially to gain market share, then move to Value-based."},
-        {l:"111. Average Ticket Size", v:biz.cat==="Food" ? "\u20B9 200 - \u20B9 400 per bill" : "\u20B9 500 - \u20B9 1,500 per transaction."},
-        {l:"112. Target Sales Vol", v:`You need approx. <strong>${dailySales} orders per day</strong> to hit targets.`},
-        {l:"113. Net Margin", v:`<strong>${(biz.margin*100).toFixed(0)}%</strong> (Net Take-home Profit after all expenses).`},
+        {l:"110. Pricing Strategy", v:"Competitive / Market Standard."},
+        {l:"111. Average Ticket Size", v:biz.cat==="Food" ? "\u20B9 200 - 400" : "\u20B9 500 - 1500."},
+        {l:"112. Target Sales Vol", v:`Approx <strong>${daily} orders/day</strong> needed.`},
+        {l:"113. Net Margin", v:`<strong>${(biz.margin*100).toFixed(0)}%</strong> (Net Profit after expenses).`},
         {l:"114. Monthly Net Profit", v:`Projected: <strong>${fmt(Math.round(op * 4.0 * biz.margin))}</strong> in stable phase.`},
-        {l:"115. Break-Even Point", v:`${document.getElementById("breakEven").innerText}. (Time to recover initial investment).`},
-        {l:"116. ROI (Yearly)", v:"Target 30% - 40% Return on Investment per annum."},
-        {l:"117. Cash Flow Cycle", v:"B2C business ensures immediate cash flow (Daily). No credit period issues."}
+        {l:"115. Break-Even Point", v:`${document.getElementById("breakEven").innerText} (Recovery Time).`},
+        {l:"116. ROI (Yearly)", v:"30% - 40% Return on Investment."},
+        {l:"117. Cash Flow Cycle", v:"Daily (B2C Model) - No Credit issues."}
     ]);
 
-    // --- SECTION M: RISK ---
+    // M. RISK
     addSec("M", "RISK ANALYSIS & MITIGATION", [
-        {l:"118. Market Risk", v:biz.risk.m > 50 ? "<strong>High.</strong> Trend changes or low demand." : "<strong>Moderate.</strong> Steady demand expected."},
-        {l:"119. Competition", v:"Expect strong competition from established local players and online giants."},
-        {l:"120. Regulatory Risk", v:"Low, provided you maintain licenses (FSSAI/GST) and file returns on time."},
-        {l:"121. Operational Risk", v:"Staff turnover (employees leaving) is the biggest headache. Have backup contacts."},
-        {l:"122. Financial Risk", v:"Cash crunch in the first 6 months. Maintain the contingency fund strictly."},
-        {l:"123. Supply Chain", v:"Raw material price fluctuation. Fix rates with vendors for 6 months."},
-        {l:"124. Insurance", v:"<strong>Mandatory.</strong> Take a 'Shopkeeper's Policy' covering Fire, Burglary, and Cash in Transit."}
+        {l:"118. Market Risk", v:"Moderate. Steady demand expected."},
+        {l:"119. Competition", v:"Expect competition from local players."},
+        {l:"120. Regulatory Risk", v:"Low, provided licenses are renewed on time."},
+        {l:"121. Operational Risk", v:"Staff turnover is main issue."},
+        {l:"122. Financial Risk", v:"Initial cash crunch (First 6 months)."},
+        {l:"123. Supply Chain", v:"Raw material price fluctuations."},
+        {l:"124. Insurance", v:"Mandatory (Fire/Burglary policy)."}
     ]);
 
-    // --- SECTION N: GROWTH ---
+    // N. GROWTH
     addSec("N", "SCALABILITY & FUTURE GROWTH", [
-        {l:"125. Expansion Plan", v:"Stabilize for 18 months. Then look for a second location in a nearby area."},
-        {l:"126. Franchising", v:"Once you have a profitable model, document your Standard Operating Procedures (SOPs) to sell franchises."},
-        {l:"127. Product Line", v:"Add complementary products (e.g., if selling tea, add snacks/cookies) to increase bill value."},
-        {l:"128. Geographic", v:"Expand delivery radius using 3rd party logistics (Dunzo/Porter)."},
-        {l:"129. Tech Upgrade", v:"Invest in your own ordering App/Website to save commissions paid to aggregators."},
-        {l:"130. Exit Strategy", v:"Build brand value to eventually sell the business or run it on auto-pilot with a manager."}
+        {l:"125. Expansion Plan", v:"Look for 2nd Unit after 18 months."},
+        {l:"126. Franchising", v:"Possible after brand stabilization."},
+        {l:"127. Product Line", v:"Add complementary products to increase sales."},
+        {l:"128. Geographic", v:"Expand delivery radius to nearby towns."},
+        {l:"129. Tech Upgrade", v:"Launch own App/Website to save commissions."},
+        {l:"130. Exit Strategy", v:"Sell business or Automate operations."}
     ]);
 
-    // --- SECTION O: DIGITAL ---
+    // O. DIGITAL
     addSec("O", "DIGITAL TOOLS & AUTOMATION", [
-        {l:"131. Billing Software", v:"Use <strong>Vyapar, Tally, or Petpooja</strong>. Do not use manual paper billing."},
-        {l:"132. Inventory Mgmt", v:"Track stock levels digitally to prevent theft and wastage."},
-        {l:"133. CRM Tool", v:"Use WhatsApp Business API to send offers to existing customers."},
-        {l:"134. Payments", v:"Install All-in-One QR Code (PhonePe/Paytm/GPay) and a Card Swipe Machine."},
-        {l:"135. Data Backup", v:"Ensure your billing data is synced to the Cloud (Google Drive) daily."},
-        {l:"136. Cyber Security", v:"Basic Antivirus and secure Wi-Fi password are sufficient."}
+        {l:"131. Billing Software", v:"Vyapar / Tally."},
+        {l:"132. Inventory Mgmt", v:"Digital Tracking to prevent theft."},
+        {l:"133. CRM Tool", v:"WhatsApp Business API."},
+        {l:"134. Payments", v:"All-in-One UPI QR + Card Machine."},
+        {l:"135. Data Backup", v:"Google Drive Cloud Sync (Daily)."},
+        {l:"136. Cyber Security", v:"Basic Antivirus is sufficient."}
     ]);
 
-    // --- SECTION P: ESG ---
+    // P. ESG
     addSec("P", "SUSTAINABILITY (ESG)", [
-        {l:"137. Energy Efficiency", v:"Use LED lights and 5-Star rated appliances to reduce electricity bills by 20%."},
-        {l:"138. Waste Management", v:"Segregate Wet/Dry waste. Sell dry waste (cartons) to scrap dealers for petty cash."},
-        {l:"139. Packaging", v:"Avoid single-use plastic. Use paper bags or cloth bags to build an eco-friendly brand image."},
-        {l:"140. Local Sourcing", v:"Buy from local farmers/vendors to reduce transport carbon footprint and cost."},
-        {l:"141. CSR", v:"Small donations to local community events help build local goodwill."}
+        {l:"137. Energy Efficiency", v:"Use LED Lights and 5-Star Appliances."},
+        {l:"138. Waste Management", v:text.waste},
+        {l:"139. Packaging", v:"Avoid Single-use Plastic. Use Paper/Cloth."},
+        {l:"140. Local Sourcing", v:"Buy local to reduce carbon footprint."},
+        {l:"141. CSR", v:"Small community donations (Optional)."}
     ]);
 
-    // --- SECTION Q: VERDICT ---
+    // Q. VERDICT
     addSec("Q", "FINAL DECISION PARAMETERS", [
-        {l:"142. Skill Match", v: document.getElementById("skillInput").value >= 2 ? "<strong>Good Match.</strong> You seem to have the required aptitude." : "<strong>Gap Identified.</strong> You need training or a skilled partner."},
-        {l:"143. Time Commitment", v:"<strong>High.</strong> Expect to put in 10-12 hours daily for the first year."},
-        {l:"144. Stress Level", v:"Moderate to High. Dealing with staff and customers daily can be tiring."},
-        {l:"145. Family Support", v:"Crucial. You will need their support for funding or managing the shop in your absence."},
-        {l:"146. Complexity", v: biz.risk.o > 60 ? "<strong>Complex.</strong> Requires technical knowledge." : "<strong>Simple.</strong> Easy to learn and operate."},
-        {l:"147. Capital Adequacy", v: shortfall > 0 ? `<span style='color:#ef4444'>Deficit. Loan Required.</span>` : `<span style='color:#10b981'>Sufficient Funds Available.</span>`},
+        {l:"142. Skill Match", v: document.getElementById("skillInput").value >= 2 ? "<strong>Good Match.</strong> You have aptitude." : "<strong>Training Needed.</strong> Gap identified."},
+        {l:"143. Time Commitment", v:"High (10-12 Hrs/day). Full involvement req."},
+        {l:"144. Stress Level", v:"Moderate to High initially."},
+        {l:"145. Family Support", v:"Crucial for funding and backup."},
+        {l:"146. Complexity", v: biz.risk.o > 60 ? "Complex Operations." : "Simple Operations."},
+        {l:"147. Capital Adequacy", v: shortfall > 0 ? "<span style='color:#ef4444'>Deficit. Loan Required.</span>" : "<span style='color:#10b981'>Sufficient Funds.</span>"},
         {l:"148. FINAL VERDICT", v: document.getElementById("bfiScore").innerText > 60 ? "<span style='color:green; font-weight:bold; font-size:1.2rem;'>GO AHEAD \u2705</span>" : "<span style='color:red; font-weight:bold; font-size:1.2rem;'>RE-EVALUATE \uD83D\uDED1</span>"}
     ]);
 }

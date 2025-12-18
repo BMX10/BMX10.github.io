@@ -106,6 +106,7 @@
     }
 }
     </style>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 
@@ -225,6 +226,7 @@
 <button class="tool-btn" onclick="switchView('compare')">&#9878; Comparison</button>
 <!-- Add inside .tools-area -->
 <button class="tool-btn" onclick="switchView('schemes')">&#127963; Govt Schemes</button>
+<button class="tool-btn" onclick="switchView('facts')">📊 Business Facts</button>
         </div>
         
         <div class="sidebar-footer">
@@ -262,6 +264,20 @@
 
 
             </div>
+
+<!-- DYNAMIC CHARTS ROW -->
+<div class="grid-container" style="margin-top:20px;">
+    <div class="card" style="border-top:5px solid #10b981;">
+        <div style="font-size:0.8rem;font-weight:bold;color:#64748b;">MONTHLY INCOME SPLIT</div>
+        <div id="monthlyChart" style="width:100%; height:200px;"></div>
+    </div>
+    <div class="card" style="border-top:5px solid #3b82f6;">
+        <div style="font-size:0.8rem;font-weight:bold;color:#64748b;">CAPITAL ALLOCATION</div>
+        <div id="investmentChart" style="width:100%; height:200px;"></div>
+    </div>
+</div>
+
+
           <div class="card" style="margin-bottom:20px; border-left:5px solid #10b981;"><h3>&#127963; Loan Eligibility</h3><div id="loanMatches"></div></div>
 <div class="card" style="margin-bottom:20px;"><h3>&#128293; Risk Analysis</h3><div class="risk-container" id="riskBars"></div></div>
 <div class="card" style="margin-bottom:20px;"><h3>&#128200; Financials</h3><table class="fin-table" id="cashFlowTable"><thead><tr><th>Metric</th><th>Setup (M1-3)</th><th>Growth (M4-6)</th><th>Stable (M7-12)</th></tr></thead><tbody></tbody></table></div>
@@ -347,6 +363,18 @@
     <div id="schemesList" class="grid-container"></div>
 </div>
 
+<!-- BUSINESS FACTS VIEW (Step 3) -->
+<div id="factsView" style="display:none;">
+    <div class="header-panel">
+        <div>
+            <h1 id="factsTitle" style="color:var(--primary); font-family:'Merriweather',serif; font-size:2rem;">Business Facts</h1>
+            <div class="status-badge" style="background:#e2e8f0; padding:5px 12px; border-radius:15px; display:inline-block; margin-top:5px; font-weight:600; font-size:0.85rem;">Market Intelligence</div>
+        </div>
+    </div>
+    <!-- This is where the 10 facts will be displayed as cards -->
+    <div id="factsGrid" class="grid-container"></div>
+</div>
+
  <!-- VIEW 4: BEHIND THE NUMBERS (UPDATED LOGIC) -->
     <div id="logicView" style="display:none;" class="info-container">
         <h1>Behind the Numbers</h1>
@@ -425,10 +453,12 @@
             <p>BMX10<br>Mumbai, Maharashtra - 400067</p>
         </div>
     </div>
+
     </main>
 
     <!-- APP LOGIC -->
     <script>
+
 
 // --- 0. STATE ECONOMIC MULTIPLIERS (New Addition) ---
 const stateRates = {
@@ -453,6 +483,13 @@ function checkBudget() {
     }
     return true;
 }
+
+
+
+
+
+
+
         // 1. FULL DATABASE (100 ITEMS)
         const database=[
             {id:1,name:"Grocery Store",cat:"Retail",baseInv:300000,baseOp:25000,margin:0.15,risk:{m:30,o:40,r:20},desc:"Daily essentials."},
@@ -607,48 +644,75 @@ function isBudgetValid() {
             });
         }
 
-     function switchView(mode) {
-            // 1. Hide Welcome Screen
-            document.getElementById("welcomeScreen").style.display = 'none';
+function switchView(mode) {
+    // 1. Hide the Welcome Screen
+    document.getElementById("welcomeScreen").style.display = 'none';
 
-            // 2. Hide ALL Views (Added "schemesView" to the list)
-            const views = [
-                "reportContainer", 
-                "finderView", 
-                "compareView", 
-                "schemesView", // <--- Added this
-                "logicView", 
-                "aboutView", 
-                "privacyView", 
-                "contactView"
-            ];
-            
-            views.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
+    // 2. Hide ALL Views (Added factsView to this list)
+    const views = ["reportContainer", "finderView", "compareView", "schemesView", "factsView", "logicView", "aboutView", "privacyView", "contactView"];
+    
+    views.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
 
-            // 3. Show the Selected View
-            if (mode === 'analyze') {
-                document.getElementById("reportContainer").style.display = 'block';
-                window.scrollTo({top: 0, behavior: 'smooth'});
-            } 
-            else if (mode === 'schemes') {
-                document.getElementById("schemesView").style.display = 'block';
-                renderSchemes(); // <--- Auto-load the schemes when clicked
-            }
-            else {
-                // Works for finder, compare, logic, about, etc.
-                const viewId = mode + "View";
-                if(document.getElementById(viewId)) {
-                    document.getElementById(viewId).style.display = 'block';
-                }
-            }
-
-            // 4. Run specific logic if needed
-            if (mode === 'finder') runFinder();
+    // 3. Logic to show the correct page
+    if (mode === 'analyze') {
+        document.getElementById("reportContainer").style.display = 'block';
+        generateAnalysis(); // Auto-run analysis when tab clicked
+    } 
+    else if (mode === 'facts') {
+        document.getElementById("factsView").style.display = 'block';
+        renderBusinessFacts(); // <--- THIS fills the data in the boxes
+    }
+    else if (mode === 'schemes') {
+        document.getElementById("schemesView").style.display = 'block';
+        renderSchemes();
+    }
+    else {
+        // Standard views (logic, about, contact, etc.)
+        const viewId = mode + "View";
+        if(document.getElementById(viewId)) {
+            document.getElementById(viewId).style.display = 'block';
         }
+    }
 
+    // 4. Run finder logic if needed
+    if (mode === 'finder') runFinder();
+}
+
+function renderBusinessFacts() {
+    // Get the business ID currently selected in your sidebar dropdown
+    let bizId = document.getElementById("bizSelect").value;
+    let bizName = document.getElementById("bizSelect").selectedOptions[0].text;
+    
+    // Look up the data in your 108-business database
+    let f = BIZ_FACTS_DATA[bizId];
+    
+    // Update the Title
+    document.getElementById("factsTitle").innerText = "Business Intelligence: " + bizName;
+    
+    let container = document.getElementById("factsGrid");
+    
+    if(!f) {
+        container.innerHTML = "<div class='card'>Data pending for this category.</div>";
+        return;
+    }
+
+    // Create the 10 fact boxes
+    container.innerHTML = `
+        <div class="card"><strong>Growth Rate</strong><br>${f.g}</div>
+        <div class="card"><strong>Market Size</strong><br>${f.m}</div>
+        <div class="card"><strong>Demand Trend</strong><br>${f.d}</div>
+        <div class="card"><strong>Units in India</strong><br>${f.u}</div>
+        <div class="card"><strong>Competition</strong><br>${f.c}</div>
+        <div class="card"><strong>Employees</strong><br>${f.e}</div>
+        <div class="card"><strong>Skill Needed</strong><br>${f.s}</div>
+        <div class="card"><strong>Training</strong><br>${f.t}</div>
+        <div class="card"><strong>Gender Participation</strong><br>${f.gen}</div>
+        <div class="card"><strong>Entry Barriers</strong><br>${f.b}</div>
+    `;
+}
         // 3. MAIN ANALYSIS
        // 3. MAIN ANALYSIS
         // 3. MAIN ANALYSIS (FIXED SKILL LOGIC)
@@ -748,6 +812,63 @@ function isBudgetValid() {
             tl.innerHTML = steps.map(s=>`<div class="timeline-item"><div class="time-day">${s.d}</div><div class="time-task">${s.t}</div><div class="time-desc">${s.x}</div></div>`).join("");
 
             renderDetailedReport(biz, adjInv, adjOp, tier, stateName, budget);
+
+// --- DYNAMIC GOOGLE CHARTS LOGIC ---
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(() => {
+        
+        // 1. Monthly Wallet Split (Profit vs Expenses)
+        let monthlyRevenue = adjOp * 4;
+        var data1 = google.visualization.arrayToDataTable([
+            ['Type', 'Rupees'],
+            ['Net Profit', profit],
+            ['Running Costs', adjOp * 3] // Total expenses including stock/rent/salaries
+        ]);
+
+        var chart1 = new google.visualization.PieChart(document.getElementById('monthlyChart'));
+        chart1.draw(data1, {
+            pieHole: 0.4,
+            colors: ['#10b981', '#f43f5e'],
+            legend: {position: 'bottom'},
+            chartArea: {width:'90%', height:'80%'}
+        });
+
+        // 2. Capital Allocation (Where the investment goes)
+        // We use percentages of total adjInv
+       // 2. Smart Capital Allocation (Checks if Street Food or Shop)
+        let allocationData;
+
+        if (biz.cat === "Street Food") {
+            allocationData = [
+                ['Asset', 'Rupees'],
+                ['Custom Fabricated Cart', Math.round(adjInv * 0.60)],
+                ['Raw Material Stock', Math.round(adjInv * 0.15)],
+                ['Branding & Signage', Math.round(adjInv * 0.15)],
+                ['Utensils & Tools', Math.round(adjInv * 0.05)],
+                ['Local Permits', Math.round(adjInv * 0.05)]
+            ];
+        } else {
+            allocationData = [
+                ['Asset', 'Rupees'],
+                ['Equipment/Machines', Math.round(adjInv * 0.40)],
+                ['Rental Deposit', Math.round(adjInv * 0.20)],
+                ['Opening Stock', Math.round(adjInv * 0.20)],
+                ['Interior/Civil', Math.round(adjInv * 0.15)],
+                ['Licenses/Legal', Math.round(adjInv * 0.05)]
+            ];
+        }
+
+        var data2 = google.visualization.arrayToDataTable(allocationData);
+
+        var chart2 = new google.visualization.PieChart(document.getElementById('investmentChart'));
+       chart2.draw(data2, {
+            is3D: true,
+            // UPDATED COLORS: Blue, Green, Red, Yellow, Orange
+            colors: ['#2563eb', '#10b981', '#ef4444', '#f59e0b', '#f97316'], 
+            legend: {position: 'bottom'},
+            chartArea: {width:'90%', height:'80%'}
+        });
+    });
         }
         // 4. FINDER
         function runFinder() {
@@ -951,6 +1072,7 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
             {l:"90. KYC", v:"Aadhaar + Vending Certificate."},
             {l:"91. Bank", v:"Any Public Sector Bank."}
         ]);
+
 
         // J. SCHEMES
         addSec("J", "GOVT BENEFITS", [
@@ -1221,6 +1343,7 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
         {l:"91. Preferred Banks", v:"Public Sector Banks (SBI, PNB, BOB, Canara)."}
     ]);
 
+
     // J. SCHEMES
     addSec("J", "GOVERNMENT SCHEMES (SUBSIDY)", [
         {l:"92. PMEGP Scheme", v:"15-35% Subsidy on project cost (Online Application)."},
@@ -1396,6 +1519,118 @@ function renderSchemes() {
             </div>`;
     });
 }
+// --- COMPLETE 108 BUSINESS FACTS DATA BANK ---
+const BIZ_FACTS_DATA = {
+    1: {g:"10–12%", m:"₹15–20 lakh crore", d:"Stable, essentials", u:"10–12 lakh", c:"High", e:"2–5", s:"Basic retail", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    2: {g:"12–15%", m:"₹3–3.5 lakh crore", d:"Seasonal, fashion", u:"1–1.5 lakh", c:"Very high", e:"3–8", s:"Sales/Inventory", t:"2–3 months", gen:"Mixed/Female", b:"High"},
+    3: {g:"10–12%", m:"₹2–2.5 lakh crore", d:"Growing, tech-driven", u:"50,000–70,000", c:"High", e:"2–4", s:"Moderate", t:"2–3 months", gen:"Mostly male", b:"Moderate–High"},
+    4: {g:"8–10%", m:"₹70,000–80,000 crore", d:"Stable, fashion", u:"50,000–60,000", c:"High", e:"2–5", s:"Basic sales", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    5: {g:"12–15%", m:"₹1.5–2 lakh crore", d:"High, tech-driven", u:"40,000–50,000", c:"High", e:"3–7", s:"Moderate–high", t:"2–3 months", gen:"Mostly male", b:"High"},
+    6: {g:"15–18%", m:"₹70,000–80,000 crore", d:"Growing, urban", u:"30,000–40,000", c:"Very high", e:"2–5", s:"Moderate", t:"1–2 months", gen:"Mostly female", b:"Moderate–High"},
+    7: {g:"6–8%", m:"₹15,000–20,000 crore", d:"Stable, education", u:"70,000–80,000", c:"Moderate", e:"1–3", s:"Basic retail", t:"1 month", gen:"Mixed", b:"Low–Moderate"},
+    8: {g:"8–10%", m:"₹15,000–20,000 crore", d:"Seasonal/occasion", u:"20,000–25,000", c:"Moderate", e:"2–4", s:"Basic sales", t:"1–2 months", gen:"Mixed/Female", b:"Moderate"},
+    9: {g:"10–12%", m:"₹80,000–90,000 crore", d:"Stable, festive", u:"30,000–40,000", c:"High", e:"2–5", s:"Moderate", t:"1–2 months", gen:"Mostly female", b:"Moderate"},
+    10: {g:"10–12%", m:"₹25,000–30,000 crore", d:"Healthcare-linked", u:"20,000–25,000", c:"Moderate", e:"2–3", s:"Healthcare knowledge", t:"2–3 months", gen:"Mixed", b:"Moderate"},
+    11: {g:"6–8%", m:"₹40,000–50,000 crore", d:"Construction-driven", u:"25,000–30,000", c:"Moderate", e:"3–6", s:"Basic–moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    12: {g:"6–8%", m:"₹30,000–35,000 crore", d:"Stable, household", u:"20,000–25,000", c:"Moderate", e:"2–4", s:"Basic retail", t:"1 month", gen:"Mixed", b:"Low–Moderate"},
+    13: {g:"10–12%", m:"₹20,000–25,000 crore", d:"Seasonal, festive", u:"15,000–20,000", c:"Moderate–High", e:"2–4", s:"Basic retail", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    14: {g:"8–10%", m:"₹15,000–20,000 crore", d:"Youth-focused", u:"15,000–20,000", c:"Moderate", e:"2–4", s:"Basic–moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    15: {g:"10–12%", m:"₹70,000–80,000 crore", d:"Home-focused", u:"30,000–35,000", c:"High", e:"3–8", s:"Moderate", t:"2–3 months", gen:"Mixed", b:"High"},
+    16: {g:"8–10%", m:"₹15,000–20,000 crore", d:"Urban-focused", u:"20,000–25,000", c:"Moderate–High", e:"2–4", s:"Basic retail", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    17: {g:"6–8%", m:"₹10,000–12,000 crore", d:"Fashion-linked", u:"10,000–12,000", c:"Moderate", e:"2–3", s:"Basic sales", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    18: {g:"12–15%", m:"₹8,000–10,000 crore", d:"Urban pet owners", u:"5,000–7,000", c:"Moderate", e:"2–5", s:"Moderate", t:"2–3 months", gen:"Mixed", b:"Moderate"},
+    19: {g:"8–10%", m:"₹5,000–6,000 crore", d:"Seasonal, festive", u:"8,000–10,000", c:"Moderate", e:"1–3", s:"Moderate", t:"1–2 months", gen:"Slight female", b:"Low–Moderate"},
+    20: {g:"10–12%", m:"₹2–2.5 lakh crore", d:"Healthcare-linked", u:"2.5–3 lakh", c:"High", e:"2–5", s:"Pharmacist license", t:"6–12 months", gen:"Mixed", b:"High"},
+    21: {g:"6–8%", m:"₹20,000–25,000 crore", d:"Daily consumption", u:"5–6 lakh", c:"Very High", e:"1–2", s:"Basic", t:"1–2 weeks", gen:"Mostly male", b:"Low"},
+    22: {g:"12–15%", m:"₹40,000–50,000 crore", d:"Urban youth", u:"15,000–20,000", c:"High", e:"4–10", s:"Moderate", t:"1–3 months", gen:"Mixed", b:"Moderate–High"},
+    23: {g:"20–25%", m:"₹15,000–20,000 crore", d:"Online delivery", u:"5,000–7,000", c:"High", e:"3–8", s:"Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    24: {g:"10–12%", m:"₹12,000–15,000 crore", d:"Festive-driven", u:"10,000–12,000", c:"Moderate–High", e:"3–6", s:"Moderate", t:"2–3 months", gen:"Mixed/Female", b:"Moderate"},
+    25: {g:"12–15%", m:"₹35,000–40,000 crore", d:"Youth-focused", u:"40,000–50,000", c:"Very High", e:"3–8", s:"Basic–Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate–High"},
+    26: {g:"10–12%", m:"₹5,000–6,000 crore", d:"Office/home delivery", u:"50,000–60,000", c:"Moderate", e:"2–5", s:"Basic–Moderate", t:"1 month", gen:"Mostly female", b:"Low"},
+    27: {g:"12–15%", m:"₹5,000–6,000 crore", d:"Health-focused", u:"20,000–25,000", c:"Moderate", e:"1–3", s:"Basic", t:"1 month", gen:"Mixed", b:"Low–Moderate"},
+    28: {g:"10–12%", m:"₹15,000–20,000 crore", d:"Seasonal peak", u:"25,000–30,000", c:"High", e:"2–5", s:"Basic–Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    29: {g:"8–10%", m:"₹12,000–15,000 crore", d:"Festival-driven", u:"30,000–35,000", c:"High", e:"2–6", s:"Moderate", t:"2–3 months", gen:"Mixed", b:"Moderate"},
+    30: {g:"15–18%", m:"₹10,000–12,000 crore", d:"Urban & events", u:"5,000–6,000", c:"Moderate–High", e:"2–4", s:"Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    31: {g:"10–12%", m:"₹20,000–25,000 crore", d:"Events/Corporate", u:"30,000–35,000", c:"High", e:"5–20", s:"Moderate", t:"2–3 months", gen:"Mixed", b:"Moderate"},
+    32: {g:"15–18%", m:"₹8,000–10,000 crore", d:"Health-conscious", u:"10,000–12,000", c:"Moderate", e:"2–5", s:"Basic–Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    33: {g:"8–10%", m:"₹15,000–18,000 crore", d:"Festive-driven", u:"12,000–15,000", c:"Moderate", e:"2–4", s:"Basic", t:"1 month", gen:"Mixed", b:"Moderate"},
+    34: {g:"6–8%", m:"₹8,000–10,000 crore", d:"Daily consumption", u:"15,000–18,000", c:"High", e:"2–3", s:"Basic", t:"1 month", gen:"Mixed", b:"Low–Moderate"},
+    35: {g:"10–12%", m:"₹3,000–4,000 crore", d:"Stable, home-made/Comm", u:"5,000–6,000", c:"Moderate", e:"1–3", s:"Moderate", t:"1–2 months", gen:"Mostly female", b:"Low"},
+    36: {g:"8–10%", m:"₹12,000–15,000 crore", d:"Daily snack", u:"20,000–25,000", c:"Moderate–High", e:"2–4", s:"Basic–Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    37: {g:"5–6%", m:"₹50,000–60,000 crore", d:"Daily essential", u:"1.5–2 lakh", c:"High", e:"2–5", s:"Basic", t:"1–2 weeks", gen:"Mixed", b:"Low–Moderate"},
+    38: {g:"8–10%", m:"₹20,000–25,000 crore", d:"Urban & rural", u:"30,000–35,000", c:"Moderate", e:"2–5", s:"Moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    39: {g:"5–6%", m:"₹5,000–6,000 crore", d:"Cultural-driven", u:"50,000–60,000", c:"High", e:"1–2", s:"Basic", t:"1 week", gen:"Mostly male", b:"Low"},
+    40: {g:"8–10%", m:"₹12,000–15,000 crore", d:"Health & urban", u:"15,000–18,000", c:"Moderate–High", e:"2–5", s:"Basic–Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    41: {g:"12–15%", m:"₹15,000–18,000 crore", d:"Tech-driven", u:"50,000–60,000", c:"High", e:"1–3", s:"Moderate–High", t:"2–6 months", gen:"Mostly male", b:"Moderate"},
+    42: {g:"8–10%", m:"₹10,000–12,000 crore", d:"Seasonal", u:"20,000–25,000", c:"Moderate", e:"1–3", s:"Moderate–High", t:"2–4 months", gen:"Mostly male", b:"Moderate"},
+    43: {g:"6–8%", m:"₹8,000–10,000 crore", d:"Essential service", u:"50,000–60,000", c:"Moderate", e:"1–2", s:"Moderate", t:"2–4 months", gen:"Mostly male", b:"Low"},
+    44: {g:"10–12%", m:"₹20,000–25,000 crore", d:"Urban/Commercial", u:"50,000–60,000", c:"High", e:"2–10", s:"Basic–Moderate", t:"1–2 weeks", gen:"Mixed", b:"Low–Moderate"},
+    45: {g:"12–15%", m:"₹8,000–10,000 crore", d:"Urban/Commercial", u:"15,000–20,000", c:"Moderate", e:"1–3", s:"Moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    46: {g:"8–10%", m:"₹12,000–15,000 crore", d:"Urban/Semi-urban", u:"30,000–35,000", c:"High", e:"2–5", s:"Basic–Moderate", t:"1–2 weeks", gen:"Mostly male", b:"Moderate"},
+    47: {g:"10–12%", m:"₹15,000–18,000 crore", d:"Urban growth", u:"40,000–50,000", c:"High", e:"2–6", s:"Basic", t:"1–2 weeks", gen:"Mixed", b:"Moderate"},
+    48: {g:"12–15%", m:"₹25,000–30,000 crore", d:"Urban growth", u:"50,000–60,000", c:"High", e:"3–10", s:"Moderate–High", t:"3–6 months", gen:"Mostly female", b:"Moderate"},
+    49: {g:"8–10%", m:"₹10,000–12,000 crore", d:"Fashion/Custom", u:"40,000–50,000", c:"Moderate", e:"2–5", s:"Moderate", t:"2–4 months", gen:"Mostly female", b:"Low–Moderate"},
+    50: {g:"10–12%", m:"₹20,000–25,000 crore", d:"Weddings/Corp", u:"5,000–7,000", c:"Moderate", e:"5–20", s:"Moderate–High", t:"2–4 months", gen:"Mixed", b:"Moderate"},
+    51: {g:"8–10%", m:"₹30,000–35,000 crore", d:"Travel growth", u:"15,000–20,000", c:"Moderate–High", e:"2–10", s:"Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    52: {g:"12–15%", m:"₹50,000–55,000 crore", d:"E-commerce driven", u:"20,000–25,000", c:"High", e:"5–20", s:"Basic–Moderate", t:"1 month", gen:"Mixed", b:"Moderate"},
+    53: {g:"6–8%", m:"₹10–12 lakh crore", d:"Urban growth", u:"2–2.5 lakh", c:"High", e:"1–5", s:"Moderate", t:"1–3 months", gen:"Mixed", b:"Low"},
+    54: {g:"8–10%", m:"₹35,000–40,000 crore", d:"Commercial/Resi", u:"15,000–20,000", c:"Moderate", e:"10–100", s:"Basic–Moderate", t:"1–3 months", gen:"Mostly male", b:"Moderate"},
+    55: {g:"10–12%", m:"₹50,000–60,000 crore", d:"Urban/Metro", u:"25,000–30,000", c:"High", e:"1–5", s:"Basic–Moderate", t:"1–2 weeks", gen:"Mostly male", b:"Moderate"},
+    56: {g:"12–15%", m:"₹5,000–6,000 crore", d:"Urban & Tourist", u:"5,000–7,000", c:"Moderate", e:"2–5", s:"Basic", t:"1 week", gen:"Mixed", b:"Moderate"},
+    57: {g:"10–12%", m:"₹20,000–25,000 crore", d:"Urban growth", u:"25,000–30,000", c:"High", e:"5–20", s:"Moderate–High", t:"3–6 months", gen:"Mixed", b:"Moderate"},
+    58: {g:"12–15%", m:"₹3,000–4,000 crore", d:"Wellness-focused", u:"5,000–6,000", c:"Moderate", e:"2–5", s:"High", t:"6–12 months", gen:"Mixed", b:"Moderate"},
+    59: {g:"8–10%", m:"₹20,000–25,000 crore", d:"Urban housing", u:"10,000–12,000", c:"High", e:"2–10", s:"High", t:"6–12 months", gen:"Mixed", b:"Moderate"},
+    60: {g:"5–6%", m:"₹5,000–6,000 crore", d:"Stable educational", u:"25,000–30,000", c:"High", e:"1–3", s:"Basic", t:"1–2 weeks", gen:"Mixed", b:"Low–Moderate"},
+    61: {g:"15–18%", m:"₹30,000–35,000 crore", d:"Rapid growth", u:"10,000–12,000", c:"High", e:"2–20", s:"High", t:"3–6 months", gen:"Mixed", b:"Moderate"},
+    62: {g:"12–15%", m:"₹5,000–6,000 crore", d:"Digital & print", u:"8,000–10,000", c:"Moderate–High", e:"1–5", s:"High", t:"3–6 months", gen:"Mixed", b:"Low–Moderate"},
+    63: {g:"15–20%", m:"₹2,000–2,500 crore", d:"Online & SEO", u:"5,000–7,000", c:"High", e:"1–3", s:"High", t:"1–3 months", gen:"Mixed", b:"Low"},
+    64: {g:"20–25%", m:"₹8–9 lakh crore", d:"Rapid growth", u:"5–6 lakh", c:"Very High", e:"1–10", s:"Moderate–High", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    65: {g:"18–22%", m:"₹5,000–6,000 crore", d:"Urban growth", u:"3,000–5,000", c:"High", e:"1–3", s:"Moderate", t:"1–2 months", gen:"Mixed", b:"Low–Moderate"},
+    66: {g:"20–25%", m:"₹5,000–6,000 crore", d:"Rapid growth", u:"1.5–2 lakh creators", c:"Very High", e:"1–5", s:"High", t:"2–6 months", gen:"Mixed", b:"Low"},
+    67: {g:"15–18%", m:"₹40,000–45,000 crore", d:"Tech growth", u:"15,000–20,000", c:"High", e:"1–20", s:"High", t:"6–12 months", gen:"Mixed", b:"Moderate–High"},
+    68: {g:"12–15%", m:"₹15,000–18,000 crore", d:"SME/Startup", u:"10,000–12,000", c:"High", e:"1–10", s:"High", t:"3–6 months", gen:"Mixed", b:"Low–Moderate"},
+    69: {g:"20–25%", m:"₹3,000–4,000 crore", d:"Rapid growth", u:"50,000–60,000", c:"Very High", e:"1–5", s:"High", t:"2–4 months", gen:"Mixed", b:"Low"},
+    70: {g:"18–22%", m:"₹15,000–20,000 crore", d:"K-12 growth", u:"1.5–2 lakh", c:"High", e:"1–5", s:"High", t:"1–2 months", gen:"Mixed", b:"Low–Moderate"},
+    71: {g:"10–12%", m:"₹35,000–40,000 crore", d:"Steady urban", u:"5–6 lakh", c:"High", e:"1–5", s:"High", t:"1–2 months", gen:"Mixed", b:"Low"},
+    72: {g:"12–15%", m:"₹8,000–10,000 crore", d:"Language", u:"25,000–30,000", c:"Moderate–High", e:"1–5", s:"Moderate–High", t:"1–3 months", gen:"Mixed", b:"Low–Moderate"},
+    73: {g:"12–15%", m:"₹15,000–18,000 crore", d:"K12 & Competitive", u:"40,000–50,000", c:"High", e:"2–10", s:"High", t:"1–3 months", gen:"Mixed", b:"Low–Moderate"},
+    74: {g:"10–12%", m:"₹5,000–6,000 crore", d:"Steady urban", u:"15,000–18,000", c:"Moderate", e:"1–5", s:"Moderate–High", t:"1–3 months", gen:"Mixed", b:"Low"},
+    75: {g:"10–12%", m:"₹20,000–25,000 crore", d:"Childcare", u:"50,000–60,000", c:"High", e:"5–20", s:"Moderate–High", t:"3–6 months", gen:"Mostly female", b:"Moderate"},
+    76: {g:"12–15%", m:"₹10,000–12,000 crore", d:"Govt/Private", u:"20,000–25,000", c:"Moderate", e:"3–15", s:"Moderate–High", t:"3–12 months", gen:"Mixed", b:"Moderate"},
+    77: {g:"10–12%", m:"₹15,000–18,000 crore", d:"IT training", u:"25,000–30,000", c:"High", e:"2–15", s:"High", t:"3–12 months", gen:"Mixed", b:"Moderate"},
+    78: {g:"8–10%", m:"₹3,000–4,000 crore", d:"Steady urban", u:"15,000–20,000", c:"Moderate", e:"1–5", s:"High", t:"6–12 months", gen:"Mixed", b:"Low–Moderate"},
+    79: {g:"8–10%", m:"₹3,000–4,000 crore", d:"Steady urban", u:"12,000–15,000", c:"Moderate", e:"1–5", s:"High", t:"6–12 months", gen:"Mixed", b:"Low"},
+    80: {g:"8–10%", m:"₹2,500–3,500 crore", d:"Steady hobbyists", u:"10,000–12,000", c:"Moderate", e:"1–5", s:"Moderate–High", t:"3–6 months", gen:"Mixed", b:"Low"},
+    81: {g:"10–12%", m:"₹5,000–6,000 crore", d:"F&B sector", u:"2,000–3,000", c:"Moderate", e:"10–30", s:"Moderate", t:"1–3 months", gen:"Mostly male", b:"Moderate"},
+    82: {g:"10–12%", m:"₹4,000–5,000 crore", d:"Events/F&B", u:"2,000–2,500", c:"Moderate", e:"10–25", s:"Moderate", t:"1–3 months", gen:"Mostly male", b:"Moderate"},
+    83: {g:"8–10%", m:"₹1,000–1,200 crore", d:"Festivals", u:"5,000–6,000", c:"Moderate", e:"2–10", s:"Moderate", t:"1 month", gen:"Mixed", b:"Low"},
+    84: {g:"12–15%", m:"₹10,000–12,000 crore", d:"Personal care", u:"8,000–10,000", c:"High", e:"5–20", s:"High", t:"2–4 months", gen:"Mixed", b:"Moderate"},
+    85: {g:"10–12%", m:"₹12,000–15,000 crore", d:"FMCG sector", u:"5,000–6,000", c:"High", e:"5–20", s:"High", t:"3–6 months", gen:"Mixed", b:"Moderate"},
+    86: {g:"8–10%", m:"₹4,000–5,000 crore", d:"Religious", u:"5,000–6,000", c:"Moderate", e:"5–15", s:"Moderate", t:"1 month", gen:"Mixed", b:"Low"},
+    87: {g:"8–10%", m:"₹8,000–9,000 crore", d:"Schools/Offices", u:"8,000–10,000", c:"High", e:"5–20", s:"Moderate", t:"1–2 months", gen:"Mixed", b:"Moderate"},
+    88: {g:"10–12%", m:"₹15,000–18,000 crore", d:"Growing sector", u:"6,000–8,000", c:"High", e:"10–50", s:"Moderate–High", t:"2–4 months", gen:"Mixed", b:"Moderate"},
+    89: {g:"8–10%", m:"₹25,000–30,000 crore", d:"Domestic/Export", u:"10,000–12,000", c:"High", e:"5–25", s:"Moderate", t:"1–3 months", gen:"Mixed", b:"Moderate"},
+    90: {g:"6–8%", m:"₹50,000–55,000 crore", d:"Staple food", u:"15,000–20,000", c:"High", e:"5–30", s:"Moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    91: {g:"8–10%", m:"₹20,000–25,000 crore", d:"Edible oils", u:"5,000–6,000", c:"Moderate", e:"10–30", s:"Moderate–High", t:"2–4 months", gen:"Mostly male", b:"Moderate"},
+    92: {g:"10–12%", m:"₹2.5–3 lakh crore", d:"Growing market", u:"30,000–35,000", c:"High", e:"20–200", s:"Moderate–High", t:"3–6 months", gen:"Mixed/Female", b:"High"},
+    93: {g:"8–10%", m:"₹50,000–60,000 crore", d:"Urban housing", u:"8,000–10,000", c:"High", e:"10–50", s:"Moderate–High", t:"3–6 months", gen:"Mostly male", b:"High"},
+    94: {g:"10–12%", m:"₹35,000–40,000 crore", d:"E-commerce growth", u:"5,000–6,000", c:"High", e:"5–30", s:"Moderate", t:"1–3 months", gen:"Mixed", b:"Moderate"},
+    95: {g:"8–10%", m:"₹15,000–18,000 crore", d:"Urban demand", u:"5,000–6,000", c:"Moderate", e:"10–50", s:"Moderate–High", t:"2–4 months", gen:"Mixed", b:"Moderate"},
+    96: {g:"8–10%", m:"₹1.5–1.8 lakh crore", d:"Steady staple", u:"50,000–60,000", c:"High", e:"5–20", s:"Moderate", t:"1–3 months", gen:"Mixed", b:"Moderate"},
+    97: {g:"8–10%", m:"₹50,000–60,000 crore", d:"Steady poultry", u:"15,000–20,000", c:"High", e:"5–20", s:"Moderate–High", t:"1–3 months", gen:"Mostly male", b:"Moderate"},
+    98: {g:"6–8%", m:"₹20,000–25,000 crore", d:"Meat market", u:"5,000–6,000", c:"Moderate", e:"2–10", s:"Moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    99: {g:"10–12%", m:"₹2,000–2,500 crore", d:"Gourmet market", u:"2,000–3,000", c:"Moderate", e:"2–10", s:"Moderate", t:"1–3 months", gen:"Mixed", b:"Low–Moderate"},
+    100: {g:"8–10%", m:"₹5,000–6,000 crore", d:"Urban garden", u:"10,000–12,000", c:"Moderate", e:"2–10", s:"Moderate", t:"1–2 months", gen:"Mixed", b:"Low–Moderate"},
+    101: {g:"8–10%", m:"₹2,000–2,500 crore", d:"Highfootfall (MH)", u:"20k–25k", c:"High", e:"1–3", s:"Low–Mod", t:"1–2 weeks", gen:"Mostly male", b:"Low"},
+    102: {g:"6–8%", m:"₹10,000–12,000 crore", d:"Nationwide Daily", u:"3–3.5 lakh", c:"High", e:"1–2", s:"Low", t:"1 week", gen:"Mostly male", b:"Low"},
+    103: {g:"8–10%", m:"₹3,000–3,500 crore", d:"Urban demand", u:"25k–30k", c:"Moderate–High", e:"1–3", s:"Low–Mod", t:"1–2 weeks", gen:"Mixed", b:"Low"},
+    104: {g:"10–12%", m:"₹5,000–6,000 crore", d:"High popular", u:"40k–50k", c:"High", e:"1–3", s:"Moderate", t:"2–3 weeks", gen:"Mostly male", b:"Low–Moderate"},
+    105: {g:"8–10%", m:"₹3,500–4,000 crore", d:"Breakfast market", u:"25k–30k", c:"Moderate–High", e:"2–4", s:"Moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    106: {g:"8–10%", m:"₹4,000–5,000 crore", d:"Urban snack", u:"20k–25k", c:"Moderate–High", e:"2–3", s:"Moderate", t:"1–2 months", gen:"Mostly male", b:"Moderate"},
+    107: {g:"6–8%", m:"₹2,000–2,500 crore", d:"Western India", u:"10k–12k", c:"Moderate", e:"1–2", s:"Low–Mod", t:"1–2 weeks", gen:"Mostly male", b:"Low"},
+    108: {g:"6–8%", m:"₹3,000–3,500 crore", d:"South/Metro", u:"15k–20k", c:"Moderate–High", e:"2–3", s:"Moderate", t:"2–3 weeks", gen:"Mostly male", b:"Moderate"}
+};
+
     </script>
 </body>
 </html>

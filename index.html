@@ -1140,6 +1140,28 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
             {l:"139. Oil", v:"Do not reuse frying oil > 3 times (Health hazard)."}
         ]);
 
+// --- SMART SWOT ANALYSIS ---
+        let swotData;
+        if (biz.cat === "Street Food") {
+            swotData = [
+                {l: "💪 Strength", v: "High daily cash rotation and zero dependence on credit sales."},
+                {l: "⚠️ Weakness", v: "Heavy physical labor required and high sensitivity to weather (rains)."},
+                {l: "🚀 Opportunity", v: "Potential to scale through catering for local events and parties."},
+                {l: "🔥 Threat", v: "Uncertainty of municipal rules and rising cost of raw materials (oil/gas)."}
+            ];
+        } else {
+            swotData = [
+                {l: "💪 Strength", v: "Tangible business assets and an established local customer base."},
+                {l: "⚠️ Weakness", v: "High fixed monthly overheads like shop rent and electricity."},
+                {l: "🚀 Opportunity", v: "Digital expansion using WhatsApp Business and Google Maps marketing."},
+                {l: "🔥 Threat", v: "Competition from big e-commerce players and local price wars."}
+            ];
+        }
+        
+        addSec("SWOT", "STRATEGIC ANALYSIS (SWOT)", swotData);
+
+
+
         // Q. VERDICT
         addSec("Q", "VERDICT", [
             {l:"142. Effort", v:"High Physical Hard work required."},
@@ -1425,6 +1447,27 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
         {l:"140. Local Sourcing", v:"Buy local to reduce carbon footprint."},
         {l:"141. CSR", v:"Small community donations (Optional)."}
     ]);
+
+
+// --- SMART SWOT ANALYSIS ---
+        let swotData;
+        if (biz.cat === "Street Food") {
+            swotData = [
+                {l: "💪 Strength", v: "High daily cash rotation and zero dependence on credit sales."},
+                {l: "⚠️ Weakness", v: "Heavy physical labor required and high sensitivity to weather (rains)."},
+                {l: "🚀 Opportunity", v: "Potential to scale through catering for local events and parties."},
+                {l: "🔥 Threat", v: "Uncertainty of municipal rules and rising cost of raw materials (oil/gas)."}
+            ];
+        } else {
+            swotData = [
+                {l: "💪 Strength", v: "Tangible business assets and an established local customer base."},
+                {l: "⚠️ Weakness", v: "High fixed monthly overheads like shop rent and electricity."},
+                {l: "🚀 Opportunity", v: "Digital expansion using WhatsApp Business and Google Maps marketing."},
+                {l: "🔥 Threat", v: "Competition from big e-commerce players and local price wars."}
+            ];
+        }
+        
+        addSec("SWOT", "STRATEGIC ANALYSIS (SWOT)", swotData);
 
     // Q. VERDICT
     addSec("Q", "FINAL DECISION PARAMETERS", [

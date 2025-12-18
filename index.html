@@ -250,6 +250,17 @@
                 <div class="score-card card"><div class="score-val" id="bfiScore">0</div><div class="score-label">Feasibility Score</div><p id="bfiMsg" style="margin-top:10px;font-weight:bold;"></p></div>
                 <div class="card"><div style="font-size:0.8rem;font-weight:bold;color:#64748b;">EST. INVESTMENT</div><div style="font-size:1.5rem;font-weight:bold;" id="reqInv">?0</div><div style="font-size:0.8rem;font-weight:bold;color:#64748b;margin-top:15px;">MONTHLY NET PROFIT</div><div style="font-size:1.5rem;font-weight:bold;color:#10b981;" id="estProfit">?0</div></div>
                 <div class="card"><div style="font-size:0.8rem;font-weight:bold;color:#64748b;">CAPITAL STATUS</div><div style="font-size:1.2rem;font-weight:bold;" id="capStatus">...</div><div style="font-size:0.8rem;font-weight:bold;color:#64748b;margin-top:15px;">BREAK-EVEN</div><div style="font-size:1.2rem;font-weight:bold;" id="breakEven">0 Months</div></div>
+
+<div class="card" style="border-top:5px solid #10b981;">
+    <div style="font-size:0.8rem;font-weight:bold;color:#64748b;">FINANCIAL RATIOS</div>
+    <div id="ratioCard" style="font-size:1.1rem; font-weight:bold; margin-top:10px; line-height:1.6; color:var(--primary);"></div>
+</div>
+
+
+
+
+
+
             </div>
           <div class="card" style="margin-bottom:20px; border-left:5px solid #10b981;"><h3>&#127963; Loan Eligibility</h3><div id="loanMatches"></div></div>
 <div class="card" style="margin-bottom:20px;"><h3>&#128293; Risk Analysis</h3><div class="risk-container" id="riskBars"></div></div>
@@ -690,6 +701,29 @@ function isBudgetValid() {
             document.getElementById("reqInv").innerText = fmt(adjInv);
             document.getElementById("estProfit").innerText = fmt(profit);
             document.getElementById("breakEven").innerText = bep + " Months";
+
+
+// --- RATIO CALCULATION ---
+            let annP = (profit * 12);
+            let roce = adjInv > 0 ? Math.round((annP / adjInv) * 100) : 0;
+            let payback = annP > 0 ? (adjInv / annP).toFixed(1) : 0;
+            let netMarg = Math.round(biz.margin * 100);
+
+           document.getElementById("ratioCard").innerHTML = `
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between;"><span>ROCE:</span> <span style="color:var(--accent)">${roce}%</span></div>
+                    <div style="font-size:0.75rem; font-weight:normal; color:#64748b; line-height:1.2;">Profit made for every ₹100 you invest.</div>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between;"><span>Payback:</span> <span style="color:var(--accent)">${payback} Yrs</span></div>
+                    <div style="font-size:0.75rem; font-weight:normal; color:#64748b; line-height:1.2;">Time to get your original money back.</div>
+                </div>
+                <div>
+                    <div style="display:flex; justify-content:space-between;"><span>Margin:</span> <span style="color:var(--accent)">${netMarg}%</span></div>
+                    <div style="font-size:0.75rem; font-weight:normal; color:#64748b; line-height:1.2;">Pure profit left from every ₹100 of sales.</div>
+                </div>
+            `;
+
             
             document.getElementById("capStatus").innerHTML = budget>=adjInv ? "Sufficient &#9989;" : "Shortfall &#128315;";
             document.getElementById("capStatus").style.color = budget>=adjInv ? "#10b981" : "#ef4444";
@@ -925,6 +959,8 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
             {l:"94. Cashback", v:"\u20B9 1,200 yearly cashback on Digital Transactions."},
             {l:"95. ID Card", v:"Get Street Vendor ID Card from Municipality (Protects from eviction)."}
         ]);
+
+
 
         // K. MARKETING
         addSec("K", "MARKETING", [
@@ -1197,6 +1233,9 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
         {l:"99. State Policies", v:`Check ${state} industrial policy for interest rebates.`},
         {l:"100. MSME Databank", v:"Register to get priority in Govt procurement."}
     ]);
+
+
+
 
     // K. MARKETING
     addSec("K", "MARKETING & SALES STRATEGY", [

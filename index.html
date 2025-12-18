@@ -109,6 +109,24 @@
 </head>
 <body>
 
+<div id="errPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:999999;align-items:center;justify-content:center;">
+    <div style="background:white;padding:25px;border-radius:8px;text-align:center;width:300px;">
+        <h2 style="margin:0 0 15px 0;color:#ef4444;">&#9888; Error</h2>
+        <p id="errMsg" style="color:#334155;margin-bottom:20px;">Message</p>
+        <button onclick="document.getElementById('errPopup').style.display='none'" style="background:#2563eb;color:white;border:none;padding:10px 25px;border-radius:5px;cursor:pointer;font-weight:bold;">OK</button>
+    </div>
+</div>
+
+
+<!-- CUSTOM ALERT BOX -->
+<div id="customAlert" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999999; justify-content:center; align-items:center;">
+    <div style="background:white; padding:25px; border-radius:10px; width:90%; max-width:350px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+        <div style="font-size:2rem; margin-bottom:10px;">??</div>
+        <p id="alertMsg" style="color:#334155; font-size:1rem; margin-bottom:20px; font-weight:600;">Message goes here</p>
+        <button onclick="document.getElementById('customAlert').style.display='none'" style="background:#2563eb; color:white; border:none; padding:10px 25px; border-radius:6px; cursor:pointer; font-weight:bold;">OK</button>
+    </div>
+</div>
+
     <!-- INTRO LAYER -->
     <div id="intro-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:99999; display:flex; justify-content:center; align-items:center;">
         <button id="playBtn" onclick="startIntro()" style="padding:20px 40px; font-size:1.5rem; background:#2563eb; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">&#9654; PLAY INTRO</button>
@@ -153,7 +171,50 @@
             </select>
         </div>
         <div class="input-group"><label>2. Select Business</label><select id="bizSelect"></select></div>
-        <div class="input-group"><label>3. Target State</label><select id="stateSelect"><option value="MH">Maharashtra</option><option value="DL">Delhi</option><option value="KA">Karnataka</option><option value="TN">Tamil Nadu</option><option value="UP">Uttar Pradesh</option><option value="GJ">Gujarat</option><option value="WB">West Bengal</option><option value="MP">Madhya Pradesh</option><option value="OT">Other</option></select></div>
+       <div class="input-group">
+    <label>3. Target State / UT</label>
+    <select id="stateSelect">
+        <!-- States -->
+        <option value="AP">Andhra Pradesh</option>
+        <option value="AR">Arunachal Pradesh</option>
+        <option value="AS">Assam</option>
+        <option value="BR">Bihar</option>
+        <option value="CG">Chhattisgarh</option>
+        <option value="GA">Goa</option>
+        <option value="GJ">Gujarat</option>
+        <option value="HR">Haryana</option>
+        <option value="HP">Himachal Pradesh</option>
+        <option value="JH">Jharkhand</option>
+        <option value="KA">Karnataka</option>
+        <option value="KL">Kerala</option>
+        <option value="MP">Madhya Pradesh</option>
+        <option value="MH">Maharashtra</option>
+        <option value="MN">Manipur</option>
+        <option value="ML">Meghalaya</option>
+        <option value="MZ">Mizoram</option>
+        <option value="NL">Nagaland</option>
+        <option value="OD">Odisha</option>
+        <option value="PB">Punjab</option>
+        <option value="RJ">Rajasthan</option>
+        <option value="SK">Sikkim</option>
+        <option value="TN">Tamil Nadu</option>
+        <option value="TG">Telangana</option>
+        <option value="TR">Tripura</option>
+        <option value="UP">Uttar Pradesh</option>
+        <option value="UK">Uttarakhand</option>
+        <option value="WB">West Bengal</option>
+        
+        <!-- Union Territories -->
+        <option value="AN">Andaman and Nicobar Islands</option>
+        <option value="CH">Chandigarh</option>
+        <option value="DN">Dadra & Nagar Haveli and Daman & Diu</option>
+        <option value="DL">Delhi</option>
+        <option value="JK">Jammu and Kashmir</option>
+        <option value="LA">Ladakh</option>
+        <option value="LD">Lakshadweep</option>
+        <option value="PY">Puducherry</option>
+    </select>
+</div>
         <div class="input-group"><label>4. Location Tier</label><select id="tierSelect"><option value="1.8">Metro (Tier 1)</option><option value="1.3">City (Tier 2)</option><option value="1.0" selected>Town (Tier 3)</option><option value="0.7">Rural</option></select></div>
        <div class="input-group"><label>5. Budget (&#8377;)</label><input type="number" id="budgetInput" value="500000" step="10000"></div>
         <div class="input-group"><label>6. Skill: <span id="skillVal" style="float:right;color:#2563eb;">Medium</span></label><input type="range" id="skillInput" min="1" max="3" value="2" oninput="document.getElementById('skillVal').innerText=['Beginner','Medium','Expert'][this.value-1]"></div>
@@ -176,7 +237,7 @@
     <main class="main-content">
         <!-- WELCOME -->
         <div id="welcomeScreen" class="welcome-screen" style="min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-            <div style="font-size:5rem;">&#128202;</div><h1 style="color:var(--primary);">BizMitra Feasibility Engine</h1>
+            <div style="font-size:5rem;">&#128202;</div><h1 style="color:var(--primary);">BMX10 Feasibility Engine</h1>
             <p style="color:#64748b;">Select a business idea or use the tools to generate a 148-point analysis.</p>
         </div>
 
@@ -209,42 +270,40 @@
             <div id="comparisonResult"></div>
         </div>
 
-   <!-- VIEW 4: BEHIND THE NUMBERS (LOGIC EXPLANATION) -->
+ <!-- VIEW 4: BEHIND THE NUMBERS (UPDATED LOGIC) -->
     <div id="logicView" style="display:none;" class="info-container">
         <h1>Behind the Numbers</h1>
-        <p>At BMX10, we believe in transparency. Here is the mathematical logic used to generate your feasibility report.</p>
+        <p>At BMX10, we believe in transparency. Our algorithms now account for both <strong>City Tiers</strong> and specific <strong>State Economies</strong>.</p>
 
         <div class="math-box">
             <h3>1. Investment Calculation</h3>
-            <p>We calculate investment based on your selected <strong>Location Tier</strong>. Costs in Metro cities are significantly higher than Rural areas.</p>
-            <p><strong>Formula:</strong> <span class="math-formula">Base Investment × (0.6 Fixed + 0.4 Variable × Tier Multiplier)</span></p>
+            <p>We calculate investment based on <strong>Location Tier</strong> (Urban/Rural) AND the <strong>State's Cost of Living</strong>.</p>
+            <p><strong>Formula:</strong> <span class="math-formula">Base Inv × (0.6 Fixed + 0.4 Variable × Effective Factor)</span></p>
+            <p><strong>Effective Factor =</strong> <span class="math-formula">Tier Value × State Multiplier</span></p>
             <ul>
-                <li><strong>Fixed Costs (60%):</strong> Machinery, Licenses, Tech (Constant).</li>
-                <li><strong>Variable Costs (40%):</strong> Interiors, Deposit, Furniture (Varies by City).</li>
-                <li><strong>Tier Multipliers:</strong> Metro (1.8), City (1.3), Town (1.0), Rural (0.7).</li>
+                <li><strong>Tier Values:</strong> Metro (1.8), City (1.3), Town (1.0), Rural (0.7).</li>
+                <li><strong>State Multipliers:</strong> e.g., Delhi/Mumbai (1.25x), Bihar/Odisha (0.8x).</li>
             </ul>
         </div>
 
         <div class="math-box">
             <h3>2. Profitability Logic</h3>
-            <p>We use a <strong>Turnover Ratio Model</strong> instead of flat assumptions.</p>
-            <p><strong>Step A (Op Cost):</strong> We calculate monthly expenses (Rent + Salaries) based on location.</p>
-            <p><strong>Step B (Revenue Target):</strong> We assume a healthy business must generate revenue <strong>4x</strong> its operational cost.</p>
-            <p><strong>Step C (Net Profit):</strong> <span class="math-formula">(Revenue × Margin %)</span></p>
-            <p>This ensures the profit shown is realistic for a <em>sustainable</em> business, not a struggling one.</p>
+            <p>We use a <strong>Dynamic Turnover Model</strong> adjusted for local purchasing power.</p>
+            <p><strong>Step A (Op Cost):</strong> We calculate monthly expenses (Rent + Salaries) based on State & Tier.</p>
+            <p><strong>Step B (Revenue):</strong> We assume a healthy business generates revenue <strong>4x</strong> its operational cost.</p>
+            <p><strong>Step C (Net Profit):</strong> <span class="math-formula">(Revenue × Net Margin %)</span></p>
         </div>
 
         <div class="math-box">
-            <h3>3. BFI Score (Business Feasibility Index)</h3>
+            <h3>3. BFI Score (Feasibility Index)</h3>
             <p>Your score (0-100) is a weighted algorithm:</p>
             <ul>
-                <li><strong>Capital Adequacy (45%):</strong> Do you have enough funds vs required investment?</li>
+                <li><strong>Capital Adequacy (45%):</strong> Do you have enough funds vs adjusted investment?</li>
                 <li><strong>Skill Match (25%):</strong> Does your experience level match the business complexity?</li>
                 <li><strong>Market Potential (30%):</strong> Based on the inherent market risk of the category.</li>
             </ul>
         </div>
     </div>
-
 <!-- VIEW 5: ABOUT & DISCLAIMER (Corrected Icons) -->
     <div id="aboutView" style="display:none;" class="info-container">
         <h1>About BMX10</h1>
@@ -253,7 +312,7 @@
         <h2 style="color:var(--danger)">&#9888; Disclaimer</h2>
         <p>The financial projections, costs, and legal requirements provided by this application are <strong>estimates for educational purposes only</strong>.</p>
         <p>Actual costs may vary based on real-estate fluctuations, vendor negotiations, and government policy changes. Users are advised to consult with a Chartered Accountant (CA) or Legal Advisor before making any actual investment.</p>
-        <p>BizMitra is not responsible for any financial losses incurred based on these projections.</p>
+        <p>BMX10 is not responsible for any financial losses incurred based on these projections.</p>
     </div>
 
     <!-- VIEW 6: PRIVACY POLICY -->
@@ -293,6 +352,30 @@
 
     <!-- APP LOGIC -->
     <script>
+
+// --- 0. STATE ECONOMIC MULTIPLIERS (New Addition) ---
+const stateRates = {
+    "DL": 1.25, "MH": 1.20, "KA": 1.15, "TN": 1.15, "GJ": 1.15, "TG": 1.15, // High Cost/Income
+    "HR": 1.10, "GA": 1.20, "KL": 1.10, "PB": 1.05, "AP": 1.05, "WB": 1.0,  // Med-High
+    "RJ": 0.95, "UP": 0.90, "MP": 0.85, "OD": 0.85, "CG": 0.85, "UK": 1.0,  // Medium
+    "BR": 0.80, "JH": 0.80, "AS": 0.85, "HP": 1.0, "CH": 1.15,              // Low / Specific
+    "JK": 0.90, "LA": 0.95, "AN": 1.10, "PY": 1.05, "DN": 1.05,             // UTs
+    "AR": 0.85, "MN": 0.85, "ML": 0.85, "MZ": 0.85, "NL": 0.85, "TR": 0.85, "SK": 0.90 // NE
+};
+
+function checkBudget() {
+    let b = parseInt(document.getElementById("budgetInput").value);
+    let msg = "";
+    if (isNaN(b) || b < 0) msg = "Please enter a valid amount.";
+    else if (b < 10000) msg = "No business idea for this budget. Please enter a higher amount.";
+    
+    if (msg) {
+        document.getElementById("errMsg").innerText = msg;
+        document.getElementById("errPopup").style.display = "flex";
+        return false;
+    }
+    return true;
+}
         // 1. FULL DATABASE (100 ITEMS)
         const database=[
             {id:1,name:"Grocery Store",cat:"Retail",baseInv:300000,baseOp:25000,margin:0.15,risk:{m:30,o:40,r:20},desc:"Daily essentials."},
@@ -397,6 +480,26 @@
             {id:100,name:"Nursery",cat:"Agriculture",baseInv:200000,baseOp:15000,margin:0.50,risk:{m:30,o:40,r:10},desc:"Plants."}
         ];
 
+// --- VALIDATION HELPER ---
+// --- VALIDATION HELPER (Custom Popup) ---
+function isBudgetValid() {
+    let b = document.getElementById("budgetInput").value;
+    let msg = "";
+    
+    if (b === "" || parseInt(b) < 0) { 
+        msg = "Please enter a valid positive amount.";
+    } 
+    else if (parseInt(b) < 10000) { 
+        msg = "No business idea for this budget. Please enter a higher amount (Min ?10,000)."; 
+    }
+
+    if (msg !== "") {
+        document.getElementById("alertMsg").innerText = msg;
+        document.getElementById("customAlert").style.display = "flex"; // Show custom box
+        return false;
+    }
+    return true;
+}
         // 2. HELPERS & INIT
       const fmt = n => "\u20B9 " + n.toLocaleString('en-IN');
         window.onload = function() {
@@ -427,32 +530,59 @@
         }
 
         // 3. MAIN ANALYSIS
+       // 3. MAIN ANALYSIS
         function generateAnalysis() {
+
+if(!checkBudget()) return; // <--- Add this line at the top
+// ... rest of the function ...
+if(!isBudgetValid()) return; // <--- ADD THIS LINE HERE
             let biz = database.find(b=>b.id==document.getElementById("bizSelect").value);
             let tier = parseFloat(document.getElementById("tierSelect").value);
             let budget = parseInt(document.getElementById("budgetInput").value);
-            let state = document.getElementById("stateSelect").value;
+            let stateCode = document.getElementById("stateSelect").value;
+            let stateName = document.getElementById("stateSelect").options[document.getElementById("stateSelect").selectedIndex].text;
 
-            // CORRECT MATH
-            let adjInv = Math.round((biz.baseInv * 0.6) + ((biz.baseInv * 0.4) * tier));
-            let adjOp = Math.round(biz.baseOp * tier);
-            let profit = Math.round(adjOp * 4.0 * biz.margin);
+            // --- FIX: STATE + TIER LOGIC ---
+            // 1. Get State Multiplier (Default to 1.0 if not found)
+            let sFactor = stateRates[stateCode] || 1.0;
+            
+            // 2. Calculate Effective Multiplier (Tier * State Economic Factor)
+            // Example: Tier 1 (1.8) * Maharashtra (1.2) = 2.16 (Very High)
+            // Example: Tier 1 (1.8) * Bihar (0.8) = 1.44 (Moderate)
+            let effectiveFactor = tier * sFactor;
+
+            // 3. Apply to Calculations
+            // Investment: Fixed costs (machines) don't change much, but Variable costs (Rent/Interior) depend heavily on State
+            let adjInv = Math.round((biz.baseInv * 0.6) + ((biz.baseInv * 0.4) * effectiveFactor));
+            
+            // Operations: Rent & Salary depend 100% on the State & Tier
+            let adjOp = Math.round(biz.baseOp * effectiveFactor);
+            
+            // Profit: Higher cost states usually have higher purchasing power (Revenue)
+            let monthlyRev = Math.round(adjOp * 4.0);
+            let profit = Math.round(monthlyRev * biz.margin);
+            
             let bep = profit>0 ? Math.ceil(adjInv/profit) : 99;
             let fundRatio = budget/adjInv;
             let bfi = Math.round((Math.min(fundRatio,1.2)*45) + 30 + ((100-biz.risk.m)*0.25));
 
             // UI UPDATES
-            document.getElementById("rptTitle").innerText = biz.name;
-            document.getElementById("rptSubtitle").innerText = document.getElementById("stateSelect").options[document.getElementById("stateSelect").selectedIndex].text;
-            document.getElementById("bfiScore").innerText = bfi;
-          document.getElementById("bfiMsg").innerText = bfi>75 ? "Excellent \u2705" : (bfi>50 ? "Moderate \u26A0" : "High Risk \uD83D\uDED1");
-            document.getElementById("bfiMsg").style.color = bfi>75?"#10b981":(bfi>50?"#f59e0b":"#ef4444");
-            document.getElementById("reqInv").innerText = fmt(adjInv);
-            document.getElementById("estProfit").innerText = fmt(profit);
-            document.getElementById("breakEven").innerText = bep + " Months";
-           document.getElementById("capStatus").innerText = budget>=adjInv ? "Sufficient \u2705" : "Shortfall \uD83D\uDD3B";
-            document.getElementById("capStatus").style.color = budget>=adjInv ? "#10b981" : "#ef4444";
-            document.getElementById("loanMatches").innerText = budget<adjInv ? (adjInv<500000?"\u2022 Mudra Shishu/Kishor":"\u2022 Mudra Tarun / PMEGP") : "\u2705 No Loan Needed";
+    document.getElementById("rptTitle").innerText = biz.name;
+    document.getElementById("rptSubtitle").innerText = `${stateName} (${document.getElementById("tierSelect").selectedOptions[0].text})`;
+    
+    document.getElementById("bfiScore").innerText = bfi;
+    document.getElementById("bfiMsg").innerHTML = bfi>75 ? "Excellent &#9989;" : (bfi>50 ? "Moderate &#9888;" : "High Risk &#128721;");
+    document.getElementById("bfiMsg").style.color = bfi>75 ? "#10b981" : (bfi>50 ? "#f59e0b" : "#ef4444");
+
+    document.getElementById("reqInv").innerText = fmt(adjInv);
+    document.getElementById("estProfit").innerText = fmt(profit);
+    document.getElementById("breakEven").innerText = bep + " Months";
+    
+    document.getElementById("capStatus").innerHTML = budget>=adjInv ? "Sufficient &#9989;" : "Shortfall &#128315;";
+    document.getElementById("capStatus").style.color = budget>=adjInv ? "#10b981" : "#ef4444";
+    
+    document.getElementById("loanMatches").innerHTML = budget<adjInv ? (adjInv<500000?"&#8226; Mudra Shishu/Kishor":"&#8226; Mudra Tarun / PMEGP") : "&#9989; No Loan Needed";
+
             // Risk Bars
             let setRisk=(id,v)=>{ let e=document.createElement("div"); e.className="risk-bar-group"; e.innerHTML=`<div class="risk-label">${id}</div><div class="progress-bg"><div class="progress-fill" style="width:${v}%;background:${v<30?'#10b981':(v<60?'#f59e0b':'#ef4444')}"></div></div>`; document.getElementById("riskBars").appendChild(e); };
             document.getElementById("riskBars").innerHTML="";
@@ -470,11 +600,14 @@
             let steps = [{d:"D1-3",t:"Entity Reg",x:"Proprietorship"},{d:"D4-7",t:"Bank/PAN",x:"Current A/c"},{d:"D8-15",t:"Licenses",x:"Udyam, GST, FSSAI"}];
             tl.innerHTML = steps.map(s=>`<div class="timeline-item"><div class="time-day">${s.d}</div><div class="time-task">${s.t}</div><div class="time-desc">${s.x}</div></div>`).join("");
 
-            renderDetailedReport(biz, adjInv, adjOp, tier, state, budget);
+            // Pass the stateName instead of stateCode for better display in the report
+            renderDetailedReport(biz, adjInv, adjOp, tier, stateName, budget);
         }
-
         // 4. FINDER
         function runFinder() {
+if(!checkBudget()) return; // <--- Add this line at the top
+// ... rest of the function ...
+if(!isBudgetValid()) return; // <--- ADD THIS LINE HERE
             let budget = parseInt(document.getElementById("budgetInput").value);
             let tier = parseFloat(document.getElementById("tierSelect").value);
             let cat = document.getElementById("catSelect").value;
@@ -492,23 +625,34 @@
             });
         }
 
-        // 5. COMPARISON
+       // 5. COMPARISON (NOW WITH STATE SENSITIVITY)
         function runComparison() {
             let b1 = database.find(b=>b.id==document.getElementById("compBiz1").value);
             let b2 = database.find(b=>b.id==document.getElementById("compBiz2").value);
             let tier = parseFloat(document.getElementById("tierSelect").value);
+            let stateCode = document.getElementById("stateSelect").value;
+            let stateName = document.getElementById("stateSelect").options[document.getElementById("stateSelect").selectedIndex].text;
             
+            // Get State Multiplier
+            let sFactor = stateRates[stateCode] || 1.0;
+            let effectiveFactor = tier * sFactor;
+
             let calc = (b) => {
-                let cost = Math.round((b.baseInv*0.6) + ((b.baseInv*0.4)*tier));
-                let op = Math.round(b.baseOp*tier);
-                let prof = Math.round(op*4.0*b.margin);
+                // Apply State * Tier Logic
+                let cost = Math.round((b.baseInv * 0.6) + ((b.baseInv * 0.4) * effectiveFactor));
+                let op = Math.round(b.baseOp * effectiveFactor);
+                let prof = Math.round(op * 4.0 * b.margin);
                 return {c:cost, p:prof};
             };
             let d1=calc(b1), d2=calc(b2);
 
             document.getElementById("comparisonResult").innerHTML = `
+                <div style="background:#f1f5f9; padding:10px; margin-bottom:10px; font-size:0.9rem; text-align:center;">
+                    Comparing for <strong>${stateName}</strong> (Tier: ${document.getElementById("tierSelect").selectedOptions[0].text})
+                </div>
                 <table class="compare-table">
                     <tr><th>Metric</th><th>${b1.name}</th><th>${b2.name}</th></tr>
+                    <tr><td>Category</td><td>${b1.cat}</td><td>${b2.cat}</td></tr>
                     <tr><td>Invest</td><td class="${d1.c<d2.c?'winner':''}">${fmt(d1.c)}</td><td class="${d2.c<d1.c?'winner':''}">${fmt(d2.c)}</td></tr>
                     <tr><td>Profit</td><td class="${d1.p>d2.p?'winner':''}">${fmt(d1.p)}</td><td class="${d2.p>d1.p?'winner':''}">${fmt(d2.p)}</td></tr>
                     <tr><td>Margin</td><td class="${b1.margin>b2.margin?'winner':''}">${(b1.margin*100).toFixed(0)}%</td><td class="${b2.margin>b1.margin?'winner':''}">${(b2.margin*100).toFixed(0)}%</td></tr>
@@ -542,7 +686,7 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
     const isRural = tier < 0.8;
     const tierName = isMetro ? "Metro City (Tier 1)" : (isRural ? "Rural / Semi-Urban" : "Tier 2/3 City");
     const rentCost = Math.round(op * 0.4); 
-    const staffSal = isMetro ? "\u20B9 18,000 - 25,000" : (isRural ? "\u20B9 8,000 - 12,000" : "\u20B9 12,000 - 18,000");
+   const staffSal = isMetro ? "\u20B9 18,000 - 25,000" : (isRural ? "\u20B9 8,000 - 12,000" : "\u20B9 12,000 - 18,000");
     const shortfall = inv - budget;
     const emi = shortfall > 0 ? Math.round(shortfall * 0.0212) : 0; // Approx EMI for 5yr @ 10%
 

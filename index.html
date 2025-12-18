@@ -531,57 +531,61 @@ function isBudgetValid() {
 
         // 3. MAIN ANALYSIS
        // 3. MAIN ANALYSIS
+        // 3. MAIN ANALYSIS (FIXED SKILL LOGIC)
         function generateAnalysis() {
+            if(!checkBudget()) return;
 
-if(!checkBudget()) return; // <--- Add this line at the top
-// ... rest of the function ...
-if(!isBudgetValid()) return; // <--- ADD THIS LINE HERE
             let biz = database.find(b=>b.id==document.getElementById("bizSelect").value);
             let tier = parseFloat(document.getElementById("tierSelect").value);
             let budget = parseInt(document.getElementById("budgetInput").value);
             let stateCode = document.getElementById("stateSelect").value;
             let stateName = document.getElementById("stateSelect").options[document.getElementById("stateSelect").selectedIndex].text;
 
-            // --- FIX: STATE + TIER LOGIC ---
-            // 1. Get State Multiplier (Default to 1.0 if not found)
+            // 1. STATE + TIER CALCULATION
             let sFactor = stateRates[stateCode] || 1.0;
-            
-            // 2. Calculate Effective Multiplier (Tier * State Economic Factor)
-            // Example: Tier 1 (1.8) * Maharashtra (1.2) = 2.16 (Very High)
-            // Example: Tier 1 (1.8) * Bihar (0.8) = 1.44 (Moderate)
             let effectiveFactor = tier * sFactor;
 
-            // 3. Apply to Calculations
-            // Investment: Fixed costs (machines) don't change much, but Variable costs (Rent/Interior) depend heavily on State
             let adjInv = Math.round((biz.baseInv * 0.6) + ((biz.baseInv * 0.4) * effectiveFactor));
-            
-            // Operations: Rent & Salary depend 100% on the State & Tier
             let adjOp = Math.round(biz.baseOp * effectiveFactor);
             
-            // Profit: Higher cost states usually have higher purchasing power (Revenue)
             let monthlyRev = Math.round(adjOp * 4.0);
             let profit = Math.round(monthlyRev * biz.margin);
-            
             let bep = profit>0 ? Math.ceil(adjInv/profit) : 99;
-            let fundRatio = budget/adjInv;
-            let bfi = Math.round((Math.min(fundRatio,1.2)*45) + 30 + ((100-biz.risk.m)*0.25));
+            
+            // 2. SCORING LOGIC
+            let fundRatio = budget / adjInv;
+            
+           // --- FIX: SKILL CALCULATION (Strictly Increasing) ---
+            let skill = parseInt(document.getElementById("skillInput").value); // 1=Beg, 2=Med, 3=Exp
+            let difficulty = biz.risk.o > 60 ? 3 : (biz.risk.o > 30 ? 2 : 1); // 1=Easy, 2=Med, 3=Hard
+            
+            // New Formula: Guaranteed increase for higher skill
+            // Beginner = 10 pts | Medium = 20 pts | Expert = 30 pts
+            let skillPoints = skill * 10;
 
+            // Penalty: Only if Skill is LOWER than Difficulty, subtract 5 points
+            if (skill < difficulty) {
+                skillPoints -= 5;
+            }
+
+            // Final Score: Capital(45%) + Skill(30%) + Market(25%)
+            let bfi = Math.round((Math.min(fundRatio,1.2)*45) + skillPoints + ((100-biz.risk.m)*0.25));
             // UI UPDATES
-    document.getElementById("rptTitle").innerText = biz.name;
-    document.getElementById("rptSubtitle").innerText = `${stateName} (${document.getElementById("tierSelect").selectedOptions[0].text})`;
-    
-    document.getElementById("bfiScore").innerText = bfi;
-    document.getElementById("bfiMsg").innerHTML = bfi>75 ? "Excellent &#9989;" : (bfi>50 ? "Moderate &#9888;" : "High Risk &#128721;");
-    document.getElementById("bfiMsg").style.color = bfi>75 ? "#10b981" : (bfi>50 ? "#f59e0b" : "#ef4444");
-
-    document.getElementById("reqInv").innerText = fmt(adjInv);
-    document.getElementById("estProfit").innerText = fmt(profit);
-    document.getElementById("breakEven").innerText = bep + " Months";
-    
-    document.getElementById("capStatus").innerHTML = budget>=adjInv ? "Sufficient &#9989;" : "Shortfall &#128315;";
-    document.getElementById("capStatus").style.color = budget>=adjInv ? "#10b981" : "#ef4444";
-    
-    document.getElementById("loanMatches").innerHTML = budget<adjInv ? (adjInv<500000?"&#8226; Mudra Shishu/Kishor":"&#8226; Mudra Tarun / PMEGP") : "&#9989; No Loan Needed";
+            document.getElementById("rptTitle").innerText = biz.name;
+            document.getElementById("rptSubtitle").innerText = `${stateName} (${document.getElementById("tierSelect").selectedOptions[0].text})`;
+            
+            document.getElementById("bfiScore").innerText = bfi;
+            document.getElementById("bfiMsg").innerHTML = bfi>75?"Excellent &#9989;":(bfi>50?"Moderate &#9888;":"High Risk &#128721;");
+            document.getElementById("bfiMsg").style.color = bfi>75?"#10b981":(bfi>50?"#f59e0b":"#ef4444");
+            
+            document.getElementById("reqInv").innerText = fmt(adjInv);
+            document.getElementById("estProfit").innerText = fmt(profit);
+            document.getElementById("breakEven").innerText = bep + " Months";
+            
+            document.getElementById("capStatus").innerHTML = budget>=adjInv ? "Sufficient &#9989;" : "Shortfall &#128315;";
+            document.getElementById("capStatus").style.color = budget>=adjInv ? "#10b981" : "#ef4444";
+            
+            document.getElementById("loanMatches").innerHTML = budget<adjInv ? (adjInv<500000?"&#8226; Mudra Shishu/Kishor":"&#8226; Mudra Tarun / PMEGP") : "&#9989; No Loan Needed";
 
             // Risk Bars
             let setRisk=(id,v)=>{ let e=document.createElement("div"); e.className="risk-bar-group"; e.innerHTML=`<div class="risk-label">${id}</div><div class="progress-bg"><div class="progress-fill" style="width:${v}%;background:${v<30?'#10b981':(v<60?'#f59e0b':'#ef4444')}"></div></div>`; document.getElementById("riskBars").appendChild(e); };
@@ -600,7 +604,6 @@ if(!isBudgetValid()) return; // <--- ADD THIS LINE HERE
             let steps = [{d:"D1-3",t:"Entity Reg",x:"Proprietorship"},{d:"D4-7",t:"Bank/PAN",x:"Current A/c"},{d:"D8-15",t:"Licenses",x:"Udyam, GST, FSSAI"}];
             tl.innerHTML = steps.map(s=>`<div class="timeline-item"><div class="time-day">${s.d}</div><div class="time-task">${s.t}</div><div class="time-desc">${s.x}</div></div>`).join("");
 
-            // Pass the stateName instead of stateCode for better display in the report
             renderDetailedReport(biz, adjInv, adjOp, tier, stateName, budget);
         }
         // 4. FINDER

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizMitra Pro | AI Business Master Engine</title>
+    <title>BMX10 | AI Business Master Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -223,6 +223,8 @@
            <button class="tool-btn primary" onclick="switchView('analyze'); generateAnalysis();">&#128202; Generate Report</button>
 <button class="tool-btn" onclick="switchView('finder')">&#128269; Smart Finder</button>
 <button class="tool-btn" onclick="switchView('compare')">&#9878; Comparison</button>
+<!-- Add inside .tools-area -->
+<button class="tool-btn" onclick="switchView('schemes')">&#127963; Govt Schemes</button>
         </div>
         
         <div class="sidebar-footer">
@@ -269,6 +271,70 @@
             <div class="card" style="margin-bottom:20px;"><select id="compBiz1"></select> <select id="compBiz2"></select> <button onclick="runComparison()" style="padding:10px;background:#2563eb;color:white;border:none;">Compare</button></div>
             <div id="comparisonResult"></div>
         </div>
+
+
+<!-- VIEW: GOVERNMENT SCHEMES (Full List) -->
+<div id="schemesView" style="display:none;">
+    <div class="header-panel">
+        <div>
+            <h1 style="color:var(--primary); font-family:'Merriweather',serif; font-size:2rem;">Government Schemes</h1>
+            <div class="status-badge" style="background:#e2e8f0; padding:5px 12px; border-radius:15px; display:inline-block; margin-top:5px; font-weight:600; font-size:0.85rem;">Central & State Database</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px; background:white; padding:25px; border-radius:10px; border:1px solid var(--border);">
+        <label style="font-weight:bold; display:block; margin-bottom:10px; color:#64748b;">Select Region to View Schemes:</label>
+        
+        <select id="schemeStateSelect" onchange="renderSchemes()" style="width:100%; padding:12px; border-radius:6px; border:1px solid #475569; background:white; color:#334155; font-size:1rem;">
+            <option value="Central" selected>-- Central Govt (Pan India) --</option>
+            
+            <optgroup label="States">
+                <option value="AP">Andhra Pradesh</option>
+                <option value="AR">Arunachal Pradesh</option>
+                <option value="AS">Assam</option>
+                <option value="BR">Bihar</option>
+                <option value="CG">Chhattisgarh</option>
+                <option value="GA">Goa</option>
+                <option value="GJ">Gujarat</option>
+                <option value="HR">Haryana</option>
+                <option value="HP">Himachal Pradesh</option>
+                <option value="JH">Jharkhand</option>
+                <option value="KA">Karnataka</option>
+                <option value="KL">Kerala</option>
+                <option value="MP">Madhya Pradesh</option>
+                <option value="MH">Maharashtra</option>
+                <option value="MN">Manipur</option>
+                <option value="ML">Meghalaya</option>
+                <option value="MZ">Mizoram</option>
+                <option value="NL">Nagaland</option>
+                <option value="OD">Odisha</option>
+                <option value="PB">Punjab</option>
+                <option value="RJ">Rajasthan</option>
+                <option value="SK">Sikkim</option>
+                <option value="TN">Tamil Nadu</option>
+                <option value="TG">Telangana</option>
+                <option value="TR">Tripura</option>
+                <option value="UP">Uttar Pradesh</option>
+                <option value="UK">Uttarakhand</option>
+                <option value="WB">West Bengal</option>
+            </optgroup>
+            
+            <optgroup label="Union Territories">
+                <option value="AN">Andaman & Nicobar Islands</option>
+                <option value="CH">Chandigarh</option>
+                <option value="DN">Dadra & Nagar Haveli and Daman & Diu</option>
+                <option value="DL">Delhi</option>
+                <option value="JK">Jammu & Kashmir</option>
+                <option value="LA">Ladakh</option>
+                <option value="LD">Lakshadweep</option>
+                <option value="PY">Puducherry</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <!-- Results will appear here -->
+    <div id="schemesList" class="grid-container"></div>
+</div>
 
  <!-- VIEW 4: BEHIND THE NUMBERS (UPDATED LOGIC) -->
     <div id="logicView" style="display:none;" class="info-container">
@@ -530,12 +596,46 @@ function isBudgetValid() {
             });
         }
 
-        function switchView(mode) {
-            document.getElementById("welcomeScreen").style.display='none';
-            ["reportContainer","finderView","compareView","logicView","aboutView","privacyView","contactView"].forEach(id=>document.getElementById(id).style.display='none');
-            if(mode==='analyze'){document.getElementById("reportContainer").style.display='block'; window.scrollTo({top:0,behavior:'smooth'});}
-            else document.getElementById(mode+"View").style.display='block';
-            if(mode==='finder') runFinder();
+     function switchView(mode) {
+            // 1. Hide Welcome Screen
+            document.getElementById("welcomeScreen").style.display = 'none';
+
+            // 2. Hide ALL Views (Added "schemesView" to the list)
+            const views = [
+                "reportContainer", 
+                "finderView", 
+                "compareView", 
+                "schemesView", // <--- Added this
+                "logicView", 
+                "aboutView", 
+                "privacyView", 
+                "contactView"
+            ];
+            
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+
+            // 3. Show the Selected View
+            if (mode === 'analyze') {
+                document.getElementById("reportContainer").style.display = 'block';
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            } 
+            else if (mode === 'schemes') {
+                document.getElementById("schemesView").style.display = 'block';
+                renderSchemes(); // <--- Auto-load the schemes when clicked
+            }
+            else {
+                // Works for finder, compare, logic, about, etc.
+                const viewId = mode + "View";
+                if(document.getElementById(viewId)) {
+                    document.getElementById(viewId).style.display = 'block';
+                }
+            }
+
+            // 4. Run specific logic if needed
+            if (mode === 'finder') runFinder();
         }
 
         // 3. MAIN ANALYSIS
@@ -1174,6 +1274,88 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
         {l:"147. Capital Adequacy", v: shortfall > 0 ? "<span style='color:#ef4444'>Deficit. Loan Required.</span>" : "<span style='color:#10b981'>Sufficient Funds.</span>"},
         {l:"148. FINAL VERDICT", v: document.getElementById("bfiScore").innerText > 60 ? "<span style='color:green; font-weight:bold; font-size:1.2rem;'>GO AHEAD \u2705</span>" : "<span style='color:red; font-weight:bold; font-size:1.2rem;'>RE-EVALUATE \uD83D\uDED1</span>"}
     ]);
+}
+
+// --- 7. COMPLETE GOVERNMENT SCHEMES DATABASE (28 STATES + 8 UTs) ---
+const schemeDB = {
+    // --- CENTRAL GOVT (PAN INDIA) ---
+    "Central": [
+        { n: "PMEGP (Prime Minister's Employment Generation)", e: "Age 18+, 8th Pass for >10L project.", d: "Aadhaar, PAN, Caste Cert, Project Report.", t: "New Micro Units.", dur: "45-60 Days.", b: "Subsidy: 15-35% of Project Cost (Max 50L)." },
+        { n: "PM Mudra Yojana (PMMY)", e: "Non-corporate, non-farm small micro enterprises.", d: "Identity, Address, Business Proof.", t: "Small Business.", dur: "7-15 Days.", b: "Collateral-free loan: Shishu (50k), Kishor (5L), Tarun (10L)." },
+        { n: "CGTMSE Scheme", e: "New/Existing MSEs.", d: "ITR, Project Report, Udyam.", t: "Up to 2 Cr.", dur: "Bank dependent.", b: "Credit Guarantee (Govt pays bank if you default)." },
+        { n: "Stand-Up India", e: "SC/ST or Women Entrepreneurs (18+).", d: "Caste Cert (if app), PAN, Aadhaar.", t: "Greenfield Projects.", dur: "30-45 Days.", b: "Bank loan \u20B9 10L - 1 Cr for first-time venture." }
+    ],
+
+    // --- NORTH INDIA ---
+    "DL": [{ n: "Delhi Startup Policy", e: "Registered in Delhi, Innovative idea.", d: "Pitch Deck, Registration.", t: "Startups.", dur: "Rolling.", b: "Collateral-free loans & Incubation support." }],
+    "HR": [{ n: "Haryana Enterprise Promotion Policy (HEPP)", e: "MSMEs in Haryana.", d: "Udyam, Haryana Udhyam Memo.", t: "Micro/Small.", dur: "Continuous.", b: "Interest subsidy 5% for 3 years, Stamp duty refund." }],
+    "HP": [{ n: "Mukhya Mantri Swavlamban Yojana (MMSY)", e: "HP Resident, Age 18-45.", d: "Bonafide Himachali, Land papers.", t: "Inv up to 60L.", dur: "45 Days.", b: "25-30% Subsidy on Machinery cost + 5% Interest Subvention." }],
+    "JK": [{ n: "J&K REGP / Tejaswini Scheme", e: "J&K Domicile (Tejaswini for Women 18-35).", d: "Domicile, 10th Pass.", t: "Service/Trading.", dur: "2 Months.", b: "35% Subsidy (REGP) or \u20B9 5L Loan assistance (Tejaswini)." }],
+    "PB": [{ n: "Punjab Rozgar (PMEGP State Nodal)", e: "Punjab Resident.", d: "Aadhaar, Project Report.", t: "All sectors.", dur: "45 Days.", b: "Facilitates PMEGP with state-level handholding." }],
+    "UP": [{ n: "Mukhyamantri Yuva Swarozgar Yojana", e: "UP Resident, 10th Pass, Age 18-40.", d: "Domicile, Marksheet, Affidavit.", t: "Industry < 25L, Service < 10L.", dur: "1 Month.", b: "25% Margin Money Subsidy on project cost." }, { n: "ODOP (One District One Product)", e: "Artisans/Units in specific district product.", d: "Unit Proof.", t: "Micro.", dur: "Ongoing.", b: "Margin Money Subsidy up to 25%." }],
+    "UK": [{ n: "Mukhyamantri Swarozgar Yojana (MSY)", e: "Uttarakhand Resident.", d: "Domicile, Affidavit.", t: "Mfg < 25L, Service < 10L.", dur: "30 Days.", b: "Margin money subsidy 15-25% based on category." }],
+    "LA": [{ n: "Ladakh Greenhouse / PMEGP", e: "Ladakh Resident.", d: "Resident Cert.", t: "Agri/Food Processing.", dur: "Seasonal.", b: "75% Subsidy for Commercial Greenhouses." }],
+    "CH": [{ n: "PMEGP (Chandigarh KVIB)", e: "Chandigarh Resident.", d: "Residence Proof.", t: "Service/Retail.", dur: "45 Days.", b: "25% Subsidy (Urban rate) on project cost." }],
+
+    // --- WEST INDIA ---
+    "GJ": [{ n: "Vajpayee Bankable Yojana", e: "Gujarat Resident, Age 18-65.", d: "Election Card, School Leaving Cert.", t: "Cottage Industries.", dur: "1-2 Months.", b: "Subsidy on loan amount (Max \u20B9 80,000 for industry)." }],
+    "GA": [{ n: "CMRY (Chief Minister's Rojgar Yojana)", e: "Goa Resident (15 Years), Age 18-45.", d: "15-Year Residence Cert, Qualification.", t: "Project < 25L.", dur: "2 Months.", b: "Low interest rate (Share capital assistance)." }],
+    "MH": [{ n: "CMEGP (Chief Minister Emp Prog)", e: "Maharashtra Domicile, Age 18-45.", d: "Domicile Cert, Education Proof.", t: "Mfg < 50L, Service < 10L.", dur: "30-60 Days.", b: "Subsidy 15-35% of project cost (State counterpart to PMEGP)." }, { n: "Women Entrepreneurship Policy", e: "100% Women owned.", d: "Udyam.", t: "All.", dur: "Case basis.", b: "Capital subsidy 15-35%." }],
+    "RJ": [{ n: "Indira Gandhi Shehari Credit", e: "Urban street vendors, Age 18-40.", d: "Jan Aadhaar Card.", t: "Street Vendors.", dur: "21 Days.", b: "Interest-free loan up to \u20B9 50,000." }, { n: "Mukhyamantri Laghu Udyog", e: "RJ Resident.", d: "Bhamashah Card.", t: "Up to 10 Cr.", dur: "45 Days.", b: "5-8% Interest Subsidy." }],
+    "DN": [{ n: "DNH & DD Industrial Policy", e: "Local Entrepreneur.", d: "Domicile.", t: "Manufacturing.", dur: "Case basis.", b: "Capital Investment Subsidy 10%." }],
+
+    // --- SOUTH INDIA ---
+    "AP": [{ n: "Jagananna Thodu", e: "Small street vendors/hawkers.", d: "Aadhaar, Bank A/c, Vending ID.", t: "Micro Vendors.", dur: "30 Days.", b: "Interest-free loan of \u20B9 10,000." }, { n: "YSR Cheyutha", e: "SC/ST/BC Women aged 45-60.", d: "Caste Cert, Aadhaar.", t: "Retail/Cattle.", dur: "Annual.", b: "\u20B9 75,000 financial assistance over 4 years." }],
+    "KA": [{ n: "CMEGP Karnataka", e: "Rural/Urban unemployed youth.", d: "Residency Proof, Caste Cert.", t: "Unit cost up to 10L.", dur: "45 Days.", b: "Subsidy up to 35% depending on category." }, { n: "Elevate Scheme", e: "Startups registered in Karnataka.", d: "Pitch Deck.", t: "Tech/Innovation.", dur: "Annual Call.", b: "Grant-in-aid up to \u20B9 50 Lakhs." }],
+    "KL": [{ n: "KESRU (Kerala Self Employment)", e: "Unemployed, registered with Emp Exchange.", d: "Exchange Reg No, Ration Card.", t: "Micro units.", dur: "1 Month.", b: "20% Subsidy on bank loan." }, { n: "WE Mission", e: "Women Entrepreneurs.", d: "Project Rpt.", t: "Small Biz.", dur: "Ongoing.", b: "Soft loans & scaling support." }],
+    "TN": [{ n: "NEEDS Scheme", e: "First Gen Entrepreneur, Degree/Diploma.", d: "Degree Cert, Transfer Cert.", t: "Project 10L - 5Cr.", dur: "2-3 Months.", b: "25% Capital Subsidy (Max \u20B9 75 Lakhs)." }, { n: "UYEGP", e: "Less educated youth.", d: "8th Pass.", t: "Project < 15L.", dur: "45 Days.", b: "25% Subsidy." }],
+    "TG": [{ n: "T-IDEA", e: "Telangana Resident.", d: "Caste/Nativity Cert.", t: "Manufacturing.", dur: "Continuous.", b: "Investment subsidy 15% + Power cost reimbursement." }],
+    "LD": [{ n: "Lakshadweep PMEGP Nodal", e: "Local Resident.", d: "Island ID.", t: "Coconut/Tuna processing.", dur: "Slow.", b: "Transport subsidy + PMEGP benefits." }],
+    "PY": [{ n: "Motivation of Entrepreneurs", e: "Puducherry Resident.", d: "PIC Registration.", t: "New Units.", dur: "Annual.", b: "Investment subsidy 25%." }],
+
+    // --- EAST INDIA ---
+    "BR": [{ n: "Mukhyamantri Udyami Yojana", e: "Bihar Resident, 10+2 Pass, SC/ST/EBC/Women.", d: "Domicile, 10th/12th Marksheet.", t: "New Industries.", dur: "Annual cycle.", b: "Loan up to 10L (50% Subsidy + 50% Interest-free loan)." }],
+    "JH": [{ n: "CMEGP (Jharkhand)", e: "Rural entrepreneurs.", d: "Caste/Income Cert, Project Report.", t: "Micro units.", dur: "60 Days.", b: "Subsidy up to 35% (State funded)." }],
+    "OD": [{ n: "Swayam / Mukhyamantri Karma Tatpara", e: "Urban poor/youth.", d: "Resident Cert, BPL card.", t: "Micro projects.", dur: "Immediate.", b: "Interest-free loan up to \u20B9 1 Lakh." }],
+    "WB": [{ n: "Bhabishyat Credit Card", e: "Age 18-45, WB Resident.", d: "Aadhaar, Project Idea.", t: "Project up to 5L.", dur: "Rolling.", b: "Loan with Govt Guarantee + Subsidy up to \u20B9 25,000." }, { n: "Karma Sathi Prakalpa", e: "Unemployed Youth.", d: "Voter ID.", t: "Small Biz.", dur: "Quick.", b: "Soft loan up to \u20B9 2 Lakhs." }],
+    "AN": [{ n: "PMEGP (Andaman)", e: "Island Resident.", d: "Islander Card.", t: "Tourism/Fisheries.", dur: "45 Days.", b: "Higher subsidy rates for Island territories (up to 35%)." }],
+
+    // --- CENTRAL INDIA ---
+    "CG": [{ n: "Mukhyamantri Yuva Swarozgar Yojana", e: "Chhattisgarh Resident, 8th Pass.", d: "Affidavit, Project Report.", t: "Project up to 25L.", dur: "45 Days.", b: "Margin money subsidy 10-15%." }],
+    "MP": [{ n: "Mukhyamantri Udyam Kranti Yojana", e: "MP Domicile, 12th Pass, Age 18-40.", d: "Samagra ID, Tax Returns.", t: "Projects 1L to 50L.", dur: "30 Days.", b: "3% Interest Subsidy + Bank Guarantee fee coverage." }],
+
+    // --- NORTH EAST INDIA ---
+    "AR": [{ n: "DDUSY (Deen Dayal Upadhyaya)", e: "Unemployed youth of Arunachal.", d: "APST Certificate.", t: "Project 10L - 50L.", dur: "2-3 Months.", b: "30% back-ended capital subsidy." }],
+    "AS": [{ n: "SVAYEM (Swami Vivekananda)", e: "Youth of Assam, Age < 40.", d: "Voter ID, Skill Certificate.", t: "Manufacturing/Service.", dur: "Monthly.", b: "Seed capital up to \u20B9 50,000 per member." }],
+    "MN": [{ n: "Start-Up Manipur", e: "Innovative ideas based in Manipur.", d: "Pitch Deck, Business Reg.", t: "Startups.", dur: "Rolling.", b: "Stand-up grant up to \u20B9 3 Lakhs." }],
+    "ML": [{ n: "PRIME Meghalaya", e: "Entrepreneurs in Meghalaya.", d: "PRIME ID.", t: "Scalable business.", dur: "Cohort based.", b: "Kickstart grant up to \u20B9 5 Lakhs." }],
+    "MZ": [{ n: "SEDP (Socio-Economic Dev Policy)", e: "Families below poverty line.", d: "Family ID.", t: "Small trades.", dur: "Annual.", b: "Financial assistance for trades/agri." }],
+    "NL": [{ n: "CM Micro Finance Initiative", e: "Nagaland resident.", d: "Indigenous Inhabitant Cert.", t: "Agri/Allied/Micro.", dur: "2 Months.", b: "Subsidy 10% + Interest subvention." }],
+    "SK": [{ n: "SYSS (Skilled Youth Startup)", e: "Sikkim Subject, Unemployed.", d: "SSC (Sikkim Subject Cert).", t: "Technical/Non-technical.", dur: "Annual.", b: "50% Subsidy on loans." }],
+    "TR": [{ n: "Swabalamban", e: "Unemployed youth of Tripura.", d: "PRTC (Perm Resident).", t: "Self-employment.", dur: "1 Month.", b: "Subsidy linked to bank loan." }]
+};
+
+function renderSchemes() {
+    const state = document.getElementById("schemeStateSelect").value;
+    // Fallback to Central if state not found, but if state is selected, show State + Central
+    const schemes = schemeDB[state] ? [...schemeDB[state], ...schemeDB["Central"]] : schemeDB["Central"];
+    
+    const container = document.getElementById("schemesList");
+    container.innerHTML = "";
+
+    schemes.forEach(s => {
+        container.innerHTML += `
+            <div class="card" style="border-left:4px solid #2563eb; margin-bottom:15px; padding:20px;">
+                <h3 style="color:#0f172a; margin-bottom:10px; font-size:1.1rem; border-bottom:1px solid #e2e8f0; padding-bottom:5px;">${s.n}</h3>
+                <div style="font-size:0.9rem; line-height:1.6; color:#334155;">
+                    <p><strong>&#9989; Eligibility:</strong> ${s.e}</p>
+                    <p><strong>&#128196; Documents:</strong> ${s.d}</p>
+                    <p><strong>&#128176; Scale:</strong> ${s.t}</p>
+                    <p><strong>&#9201; Time:</strong> ${s.dur}</p>
+                    <p style="margin-top:8px; color:#10b981; background:#ecfdf5; padding:5px; border-radius:4px;"><strong>&#9733; Benefit:</strong> ${s.b}</p>
+                </div>
+            </div>`;
+    });
 }
     </script>
 </body>

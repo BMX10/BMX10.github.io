@@ -187,37 +187,179 @@
         </div>
         <div class="input-group"><label>2. Select Business</label><select id="bizSelect"></select></div>
        <div class="input-group">
-    <label>3. Target State / UT</label>
+    <label>3. Select City / Geography</label>
     <select id="stateSelect">
-        <!-- States -->
-        <option value="AP">Andhra Pradesh</option>
-        <option value="AR">Arunachal Pradesh</option>
-        <option value="AS">Assam</option>
-        <option value="BR">Bihar</option>
-        <option value="CG">Chhattisgarh</option>
-        <option value="GA">Goa</option>
-        <option value="GJ">Gujarat</option>
-        <option value="HR">Haryana</option>
-        <option value="HP">Himachal Pradesh</option>
-        <option value="JH">Jharkhand</option>
-        <option value="KA">Karnataka</option>
-        <option value="KL">Kerala</option>
-        <option value="MP">Madhya Pradesh</option>
-        <option value="MH">Maharashtra</option>
-        <option value="MN">Manipur</option>
-        <option value="ML">Meghalaya</option>
-        <option value="MZ">Mizoram</option>
-        <option value="NL">Nagaland</option>
-        <option value="OD">Odisha</option>
-        <option value="PB">Punjab</option>
-        <option value="RJ">Rajasthan</option>
-        <option value="SK">Sikkim</option>
-        <option value="TN">Tamil Nadu</option>
-        <option value="TG">Telangana</option>
-        <option value="TR">Tripura</option>
-        <option value="UP">Uttar Pradesh</option>
-        <option value="UK">Uttarakhand</option>
-        <option value="WB">West Bengal</option>
+        <optgroup label="Maharashtra">
+            <option value="MUM_SOBO">South Mumbai (Premium/SoBo)</option>
+            <option value="MUM_SUB">Mumbai Suburbs (Bandra to Borivali)</option>
+            <option value="MUM_NAVI">Navi Mumbai</option>
+            <option value="PUNE">Pune</option>
+            <option value="NAG">Nagpur</option>
+<option value="MH_OTHER">Other Cities in Maharashtra</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Andhra Pradesh">
+            <option value="VSKP">Visakhapatnam</option>
+            <option value="VJWD">Vijayawada</option>
+            <option value="TPTI">Tirupati</option>
+<option value="AP_OTHER">Other Cities in Andhra pradesh</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Arunachal Pradesh">
+            <option value="ITA">Itanagar</option>
+            <option value="TAW">Tawang</option>
+            <option value="PAS">Pasighat</option>
+<option value="AR_OTHER">Other Cities in Arunachal pradesh</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Assam">
+            <option value="GUW">Guwahati</option>
+            <option value="DIB">Dibrugarh</option>
+            <option value="SIL">Silchar</option>
+<option value="AS_OTHER">Other Cities in Assam</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Bihar">
+            <option value="PAT">Patna</option>
+            <option value="GAY">Gaya</option>
+            <option value="BHA">Bhagalpur</option>
+<option value="BR_OTHER">Other Cities in Bihar</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Chhattisgarh">
+            <option value="RAI">Raipur</option>
+            <option value="BIL">Bilaspur</option>
+            <option value="DUR">Durg</option>
+<option value="CG_OTHER">Other Cities in Chhatisgarh</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Goa">
+            <option value="PAN">Panaji</option>
+            <option value="MAR">Margao</option>
+            <option value="VAS">Vasco da Gama</option>
+<option value="GA_OTHER">Other Cities in Goa</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Gujarat">
+            <option value="AHM">Ahmedabad</option>
+            <option value="SUR">Surat</option>
+            <option value="VAD">Vadodara</option>
+<option value="GJ_OTHER">Other Cities in Gujarat</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Haryana">
+            <option value="GUR">Gurugram</option>
+            <option value="FAR">Faridabad</option>
+            <option value="PAN">Panipat</option>
+<option value="HR_OTHER">Other Cities in Haryana</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Himachal Pradesh">
+            <option value="SHI">Shimla</option>
+            <option value="MAN">Manali</option>
+            <option value="DHA">Dharamshala</option>
+<option value="HP_OTHER">Other Cities in Himachal Pradesh</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Jharkhand">
+            <option value="RAN">Ranchi</option>
+            <option value="JAM">Jamshedpur</option>
+            <option value="DHA">Dhanbad</option>
+<option value="JH_OTHER">Other Cities in Jharkhand</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Karnataka">
+            <option value="BNG">Bengaluru</option>
+            <option value="MYS">Mysuru</option>
+            <option value="MNG">Mangaluru</option>
+<option value="KA_OTHER">Other Cities in Karnataka</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Kerala">
+            <option value="TVM">Thiruvananthapuram</option>
+            <option value="KOC">Kochi</option>
+            <option value="KOZ">Kozhikode</option>
+<option value="KL_OTHER">Other Cities in Kerala</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Madhya Pradesh">
+            <option value="BHO">Bhopal</option>
+            <option value="IND">Indore</option>
+            <option value="GWA">Gwalior</option>
+<option value="MP_OTHER">Other Cities in Madhya Pradesh</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Manipur">
+            <option value="IMP">Imphal</option>
+            <option value="THO">Thoubal</option>
+            <option value="BIS">Bishnupur</option>
+<option value="MN_OTHER">Other Cities in Manipur</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Meghalaya">
+            <option value="SHI">Shillong</option>
+            <option value="TUR">Tura</option>
+            <option value="JOW">Jowai</option>
+<option value="ML_OTHER">Other Cities in Meghalaya</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Mizoram">
+            <option value="AIZ">Aizawl</option>
+            <option value="LUN">Lunglei</option>
+            <option value="CHA">Champhai</option>
+<option value="MZ_OTHER">Other Cities in Mizoram</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Nagaland">
+            <option value="KOH">Kohima</option>
+            <option value="DIM">Dimapur</option>
+            <option value="MOK">Mokokchung</option>
+<option value="NL_OTHER">Other Cities in Nagaland</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Odisha">
+            <option value="BHU">Bhubaneswar</option>
+            <option value="CUT">Cuttack</option>
+            <option value="ROU">Rourkela</option>
+<option value="OD_OTHER">Other Cities in Odisha</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Punjab">
+            <option value="LUD">Ludhiana</option>
+            <option value="AMR">Amritsar</option>
+            <option value="JAL">Jalandhar</option>
+<option value="PB_OTHER">Other Cities in Punjab</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Rajasthan">
+            <option value="JAI">Jaipur</option>
+            <option value="JOD">Jodhpur</option>
+            <option value="UDA">Udaipur</option>
+<option value="RJ_OTHER">Other Cities in Rajasthan</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Sikkim">
+            <option value="GAN">Gangtok</option>
+            <option value="NAM">Namchi</option>
+            <option value="GYA">Gyalshing</option>
+<option value="SK_OTHER">Other Cities in Sikkim</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Tamil Nadu">
+            <option value="CHN">Chennai</option>
+            <option value="COI">Coimbatore</option>
+            <option value="MAD">Madurai</option>
+<option value="TN_OTHER">Other Cities in Tamil nadu</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Telangana">
+            <option value="HYD">Hyderabad</option>
+            <option value="WAR">Warangal</option>
+            <option value="KAR">Karimnagar</option>
+<option value="TG_OTHER">Other Cities in Telangana</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Tripura">
+            <option value="AGA">Agartala</option>
+            <option value="UDA">Udaipur</option>
+            <option value="DHA">Dharmanagar</option>
+<option value="TR_OTHER">Other Cities in Tripura</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Uttar Pradesh">
+            <option value="LKO">Lucknow</option>
+            <option value="KAN">Kanpur</option>
+            <option value="VAR">Varanasi</option>
+<option value="UP_OTHER">Other Cities in Uttar Pradesh</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="Uttarakhand">
+            <option value="DEH">Dehradun</option>
+            <option value="HAR">Haridwar</option>
+            <option value="NAI">Nainital</option>
+<option value="UK_OTHER">Other Cities in Uttarakhand</option> <!-- ADD THIS -->
+        </optgroup>
+        <optgroup label="West Bengal">
+            <option value="KOL">Kolkata</option>
+            <option value="HOW">Howrah</option>
+            <option value="SIL">Siliguri</option>
+<option value="WB_OTHER">Other Cities in West Bengal</option> <!-- ADD THIS -->
+        </optgroup>
+   
         
         <!-- Union Territories -->
         <option value="AN">Andaman and Nicobar Islands</option>
@@ -230,7 +372,14 @@
         <option value="PY">Puducherry</option>
     </select>
 </div>
-        <div class="input-group"><label>4. Location Tier</label><select id="tierSelect"><option value="1.8">Metro (Tier 1)</option><option value="1.3">City (Tier 2)</option><option value="1.0" selected>Town (Tier 3)</option><option value="0.7">Rural</option></select></div>
+       <div class="input-group">
+    <label>4. Location Type</label>
+    <select id="tierSelect">
+        <option value="1.4">Small City Area (Busy Market)</option>
+        <option value="1.0" selected>Town Area (Standard)</option>
+        <option value="0.7">Rural Area (Village)</option>
+    </select>
+</div>
        <div class="input-group"><label>5. Budget (&#8377;)</label><input type="number" id="budgetInput" value="500000" step="10000"></div>
         <div class="input-group"><label>6. Skill: <span id="skillVal" style="float:right;color:#2563eb;">Medium</span></label><input type="range" id="skillInput" min="1" max="3" value="2" oninput="document.getElementById('skillVal').innerText=['Beginner','Medium','Expert'][this.value-1]"></div>
         
@@ -491,12 +640,47 @@
 
 // --- 0. STATE ECONOMIC MULTIPLIERS (New Addition) ---
 const stateRates = {
+// MAHARASHTRA
+    "MUM_SOBO": 7.5, "MUM_SUB": 5.5, "MUM_NAVI": 3.8, "PUNE": 3.5, "NAG": 1.8,
+    // TOP METROS
+    "DEL": 5.0, "GUR": 4.8, "BNG": 4.5, "HYD": 4.0, "CHN": 3.8, "AHM": 3.5, "KOL": 3.2,
+    // TIER 1 CAPITALS
+    "LKO": 2.2, "PAT": 1.8, "GUW": 1.8, "JAI": 2.2, "CHN": 3.5, "TVM": 2.0, "BHO": 2.0, "LUD": 2.0, "BHU": 1.8, "RAN": 1.8,
     "DL": 1.25, "MH": 1.20, "KA": 1.15, "TN": 1.15, "GJ": 1.15, "TG": 1.15, // High Cost/Income
     "HR": 1.10, "GA": 1.20, "KL": 1.10, "PB": 1.05, "AP": 1.05, "WB": 1.0,  // Med-High
     "RJ": 0.95, "UP": 0.90, "MP": 0.85, "OD": 0.85, "CG": 0.85, "UK": 1.0,  // Medium
     "BR": 0.80, "JH": 0.80, "AS": 0.85, "HP": 1.0, "CH": 1.15,              // Low / Specific
     "JK": 0.90, "LA": 0.95, "AN": 1.10, "PY": 1.05, "DN": 1.05,             // UTs
-    "AR": 0.85, "MN": 0.85, "ML": 0.85, "MZ": 0.85, "NL": 0.85, "TR": 0.85, "SK": 0.90 // NE
+    "AR": 0.85, "MN": 0.85, "ML": 0.85, "MZ": 0.85, "NL": 0.85, "TR": 0.85, "SK": 0.90,// NE
+"MH_OTHER": 1.20,
+    "GJ_OTHER": 1.15,
+    "KA_OTHER": 1.15,
+    "TN_OTHER": 1.15,
+    "UP_OTHER": 0.90,
+    "BR_OTHER": 0.80,
+    "WB_OTHER": 1.00,
+    "AS_OTHER": 0.85,
+    "PB_OTHER": 1.05,
+    "RJ_OTHER": 0.95,
+ "AP_OTHER": 1.05,
+ "AR_OTHER": 0.85,
+ "CG_OTHER": 0.85,
+ "GA_OTHER": 1.20,
+"HR_OTHER": 1.10,
+  "HP_OTHER": 1.00,
+ "JH_OTHER": 0.80,
+ "KL_OTHER": 1.10,
+  "MP_OTHER": 0.95,
+  "ML_OTHER": 0.85,
+   "MZ_OTHER": 0.85,
+"MN_OTHER":0.85,
+   "NL_OTHER": 0.85,
+"OD_OTHER": 0.85,
+  "SK_OTHER": 0.90,
+  "TG_OTHER": 1.15,
+ "TR_OTHER": 0.85,
+  "UK_OTHER": 1.00,
+ "WB_OTHER": 1.00
 };
 
 function checkBudget() {
@@ -964,55 +1148,50 @@ function renderBusinessFacts() {
         // 3. MAIN ANALYSIS
        // 3. MAIN ANALYSIS
         // 3. MAIN ANALYSIS (FIXED SKILL LOGIC)
-        function generateAnalysis() {
-            if(!checkBudget()) return;
+    function generateAnalysis() {
+    if (!checkBudget()) return;
 
-            let biz = database.find(b=>b.id==document.getElementById("bizSelect").value);
-            let tier = parseFloat(document.getElementById("tierSelect").value);
-            let budget = parseInt(document.getElementById("budgetInput").value);
-            let stateCode = document.getElementById("stateSelect").value;
-            let stateName = document.getElementById("stateSelect").options[document.getElementById("stateSelect").selectedIndex].text;
+    let biz = database.find(b => b.id == document.getElementById("bizSelect").value);
+    let tier = parseFloat(document.getElementById("tierSelect").value);
+    let budget = parseInt(document.getElementById("budgetInput").value);
+    let stateCode = document.getElementById("stateSelect").value;
+    let stateName = document.getElementById("stateSelect").options[document.getElementById("stateSelect").selectedIndex].text;
 
-            // 1. STATE + TIER CALCULATION
-            let sFactor = stateRates[stateCode] || 1.0;
-            let effectiveFactor = tier * sFactor;
+    // APPLY MULTIPLIERS (City x Area Type)
+    let sFactor = stateRates[stateCode] || 1.0;
+    let effectiveFactor = tier * sFactor;
 
-            let adjInv = Math.round((biz.baseInv * 0.6) + ((biz.baseInv * 0.4) * effectiveFactor));
-            let adjOp = Math.round(biz.baseOp * effectiveFactor);
-            
-            let monthlyRev = Math.round(adjOp * 4.0);
-            let profit = Math.round(monthlyRev * biz.margin);
-            let bep = profit>0 ? Math.ceil(adjInv/profit) : 99;
-            
-            // 2. SCORING LOGIC
-            let fundRatio = budget / adjInv;
-            
-           // --- FIX: SKILL CALCULATION (Strictly Increasing) ---
-            let skill = parseInt(document.getElementById("skillInput").value); // 1=Beg, 2=Med, 3=Exp
-            let difficulty = biz.risk.o > 60 ? 3 : (biz.risk.o > 30 ? 2 : 1); // 1=Easy, 2=Med, 3=Hard
-            
-            // New Formula: Guaranteed increase for higher skill
-            // Beginner = 10 pts | Medium = 20 pts | Expert = 30 pts
-            let skillPoints = skill * 10;
+    // RENT SOLUTION: Range Calculation
+    let minInv = Math.round((biz.baseInv * 0.6) + ((biz.baseInv * 0.4) * effectiveFactor));
+    let maxInv = Math.round(minInv * 2.8); // High end allows for prime road-facing shops
 
-            // Penalty: Only if Skill is LOWER than Difficulty, subtract 5 points
-            if (skill < difficulty) {
-                skillPoints -= 5;
-            }
+    let adjOp = Math.round(biz.baseOp * effectiveFactor);
+    let minProfit = Math.round((adjOp * 4.0) * biz.margin);
+    let maxProfit = Math.round(minProfit * 1.5); 
 
-            // Final Score: Capital(45%) + Skill(30%) + Market(25%)
-            let bfi = Math.round((Math.min(fundRatio,1.2)*45) + skillPoints + ((100-biz.risk.m)*0.25));
-            // UI UPDATES
-            document.getElementById("rptTitle").innerText = biz.name;
-            document.getElementById("rptSubtitle").innerText = `${stateName} (${document.getElementById("tierSelect").selectedOptions[0].text})`;
-            
-            document.getElementById("bfiScore").innerText = bfi;
-            document.getElementById("bfiMsg").innerHTML = bfi>75?"Excellent &#9989;":(bfi>50?"Moderate &#9888;":"High Risk &#128721;");
-            document.getElementById("bfiMsg").style.color = bfi>75?"#10b981":(bfi>50?"#f59e0b":"#ef4444");
-            
-            document.getElementById("reqInv").innerText = fmt(adjInv);
-            document.getElementById("estProfit").innerText = fmt(profit);
-            document.getElementById("breakEven").innerText = bep + " Months";
+    // UI UPDATES
+    document.getElementById("rptTitle").innerText = biz.name;
+    document.getElementById("rptSubtitle").innerText = `${stateName}`;
+    document.getElementById("reqInv").innerText = fmt(minInv) + " - " + fmt(maxInv);
+    document.getElementById("estProfit").innerText = fmt(minProfit) + " - " + fmt(maxProfit);
+    document.getElementById("breakEven").innerText = Math.ceil(minInv / minProfit) + " - " + Math.ceil(maxInv / maxProfit) + " Months";
+
+    // Set Baseline for Score & Charts
+    let adjInv = minInv;
+    let profit = minProfit;
+
+    // --- ADD THESE TWO CRITICAL LINES BELOW ---
+    let fundRatio = budget / adjInv; // This was missing
+    let skill = parseInt(document.getElementById("skillInput").value);
+    
+    // Calculate BFI Score (Feasibility Index)
+    let bfi = Math.round((Math.min(fundRatio, 1.2) * 45) + (skill * 10) + ((100 - biz.risk.m) * 0.25));
+    // ------------------------------------------
+
+    // 6. UPDATE SCORING BOXES
+    document.getElementById("bfiScore").innerText = bfi;
+    document.getElementById("bfiMsg").innerHTML = bfi > 75 ? "Excellent ✅" : (bfi > 50 ? "Moderate ⚠️" : "High Risk 🛑");
+    document.getElementById("bfiMsg").style.color = bfi > 75 ? "#10b981" : (bfi > 50 ? "#f59e0b" : "#ef4444");
 
 
 // --- RATIO CALCULATION ---
@@ -1059,7 +1238,12 @@ function renderBusinessFacts() {
             let steps = [{d:"D1-3",t:"Entity Reg",x:"Proprietorship"},{d:"D4-7",t:"Bank/PAN",x:"Current A/c"},{d:"D8-15",t:"Licenses",x:"Udyam, GST, FSSAI"}];
             tl.innerHTML = steps.map(s=>`<div class="timeline-item"><div class="time-day">${s.d}</div><div class="time-task">${s.t}</div><div class="time-desc">${s.x}</div></div>`).join("");
 
-            renderDetailedReport(biz, adjInv, adjOp, tier, stateName, budget);
+           // Set max operating cost (Matching your 3x rent example)
+    let maxOp = Math.round(adjOp * 3.0); 
+
+    // Trigger the report with both Min and Max values
+    renderDetailedReport(biz, minInv, maxInv, adjOp, maxOp, stateName, budget);
+
 
 // --- DYNAMIC GOOGLE CHARTS LOGIC (REFINED) ---
 // INSIDE generateAnalysis function...
@@ -1153,14 +1337,27 @@ if(!isBudgetValid()) return; // <--- ADD THIS LINE HERE
                     <tr><td>Margin</td><td class="${b1.margin>b2.margin?'winner':''}">${(b1.margin*100).toFixed(0)}%</td><td class="${b2.margin>b1.margin?'winner':''}">${(b2.margin*100).toFixed(0)}%</td></tr>
                 </table>`;
         }
-function renderDetailedReport(biz, inv, op, tier, state, budget) {
+function renderDetailedReport(biz, minInv, maxInv, minOp, maxOp, state, budget) {
     const container = document.getElementById("detailedReport");
     container.innerHTML = "";
+    
+    // 1. FORMATTERS
+    // Standard format (Single number)
     const fmt = (n) => "₹ " + n.toLocaleString('en-IN');
     
-    // This looks for the hardcoded 148-point data for the specific business ID
-    const d = MASTER_148_DB[biz.id];
+    // Range Formatter for Operating Expenses (Solves H-71 Rent)
+    const rangeFmt = (val) => {
+        let ratio = minOp > 0 ? (maxOp / minOp) : 1;
+        return fmt(val) + " - " + fmt(Math.round(val * ratio));
+    };
+
+    // Range Formatter for Capital Allocation (Section E)
+    const invRangeFmt = (val) => {
+        let ratio = minInv > 0 ? (maxInv / minInv) : 1;
+        return fmt(val) + " - " + fmt(Math.round(val * ratio));
+    };
     
+    const d = MASTER_148_DB[biz.id];
     if (!d) {
         container.innerHTML = "<div class='card'><h3>148-Point Analysis pending for this category...</h3></div>";
         return;
@@ -1174,16 +1371,24 @@ function renderDetailedReport(biz, inv, op, tier, state, budget) {
         container.innerHTML += html + "</div>";
     };
 
-    // --- MAPPING THE 148 PARAMETERS ---
+    // 2. MAPPING THE 148 PARAMETERS WITH RANGES
     addSec("A", "IDENTITY & MARKET STRATEGY (1-10)", d.secA);
     addSec("B", "LOCATION & INFRASTRUCTURE (11-19)", d.secB);
     addSec("C", "LEGAL & REGULATORY (20-33)", d.secC);
     addSec("D", "REQUIRED DOCUMENTATION (34-43)", d.secD);
-    addSec("E", "CAPITAL ALLOCATION (44-55)", d.secE(fmt, inv));
+    
+    // SECTION E: Uses invRangeFmt to show the range of startup costs
+    addSec("E", "CAPITAL ALLOCATION (44-55)", d.secE(invRangeFmt, minInv));
+    
     addSec("F", "MACHINERY & TECHNOLOGY (56-62)", d.secF);
     addSec("G", "HUMAN RESOURCES (63-70)", d.secG);
-    addSec("H", "MONTHLY OPERATING EXPENSES (71-81)", d.secH(fmt, op));
-    addSec("I", "FINANCING & LOAN STRUCTURE (82-91)", d.secI(fmt, budget, inv));
+    
+    // SECTION H: Uses rangeFmt to show the Rent Range (1,05,000 - 3,25,000)
+    addSec("H", "MONTHLY OPERATING EXPENSES (71-81)", d.secH(rangeFmt, minOp));
+    
+    // SECTION I: Financing range
+    addSec("I", "FINANCING & LOAN STRUCTURE (82-91)", d.secI(invRangeFmt, budget, minInv));
+    
     addSec("J", "INDUSTRY MARKET FACTS (92-100)", d.secJ);
     addSec("K", "MARKETING & SALES (101-109)", d.secK);
     addSec("L", "PROFITABILITY METRICS (110-117)", d.secL);

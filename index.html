@@ -379,18 +379,7 @@
     <div id="schemesList" class="grid-container"></div>
 </div>
 
-<!-- VIEW: SWOT ANALYSIS -->
-<div id="swotView" style="display:none;">
-    <div class="header-panel">
-        <div>
-            <h1 id="swotTitle" style="color:var(--primary); font-family:'Merriweather',serif; font-size:2rem;">SWOT Analysis</h1>
-            <div class="status-badge" style="background:#e2e8f0; padding:5px 12px; border-radius:15px; display:inline-block; margin-top:5px; font-weight:600; font-size:0.85rem;">Strategic Audit</div>
-        </div>
-    </div>
-    <div id="swotContent" class="report-section-wrapper">
-        <!-- SWOT rows will be generated here -->
-    </div>
-</div>
+
 
 <!-- BUSINESS FACTS VIEW (Step 3) -->
 <div id="factsView" style="display:none;">
@@ -483,6 +472,17 @@
         </div>
     </div>
 
+
+<!-- VIEW: SWOT ANALYSIS -->
+<div id="swotView" style="display:none;">
+    <div class="header-panel">
+        <h1 id="swotTitle" style="font-family:'Merriweather',serif;">SWOT Analysis</h1>
+    </div>
+    <div id="swotContent" style="margin-top:20px;">
+        <!-- The Javascript will inject the grid-container here -->
+    </div>
+</div>
+
     </main>
 
     <!-- APP LOGIC -->
@@ -512,6 +512,60 @@ function checkBudget() {
     }
     return true;
 }
+
+// --- MASTER HARDCODED SWOT DATA (120+ CATEGORIES) ---
+const BIZ_SWOT_DATA = {
+    // RETAIL (1-20)
+    1: { s: ["Daily Essential demand", "Cash-rich business"], w: ["High competition", "Low margins"], o: ["Home delivery service", "Subscription models"], t: ["Quick-commerce (Blinkit/Zepto)", "Supermarkets"] }, // Grocery
+    2: { s: ["High visibility", "Visual appeal"], w: ["Dead stock risk", "Size/Fit returns"], o: ["Instagram marketing", "Custom tailoring"], t: ["E-commerce discounts", "Changing trends"] }, // Apparel
+    3: { s: ["High ticket size", "Tech necessity"], w: ["Price drops quickly", "Low brand loyalty"], o: ["Repair services", "Exchange offers"], t: ["Online giants (Amazon)", "Direct brand stores"] }, // Mobile
+    20: { s: ["Recession proof", "High trust"], w: ["License heavy", "Strict expiry management"], o: ["Diagnostic tie-ups", "Senior citizen care"], t: ["Online pharmacies", "Generic store chains"] }, // Pharmacy
+
+    // FOOD (21-40)
+    21: { s: ["Highest frequency", "Low skill needed"], w: ["Low per-cup profit", "Space constraints"], o: ["Snack bundling", "Corporate catering"], t: ["Branded chains (MBBS/Chayos)", "Milk price hikes"] }, // Tea
+    22: { s: ["High margins", "Social hub"], w: ["High staff turnover", "Electricity costs"], o: ["Event hosting", "Unique theme branding"], t: ["Zomato/Swiggy commissions", "Locality saturation"] }, // Cafe
+    24: { s: ["High repeat customers", "Aroma-based sales"], w: ["Short shelf life", "Early morning labor"], o: ["Custom cake orders", "Healthy/Sugar-free range"], t: ["Home bakers", "Quality consistency issues"] }, // Bakery
+    25: { s: ["Quick turnover", "Youth appeal"], w: ["Health trend shifts", "Waste management"], o: ["Combo meals", "Midnight delivery"], t: ["Street food competition", "Oil/Gas price hikes"] }, // Fast Food
+
+    // SERVICES (41-60)
+    41: { s: ["Service-led profit", "Repeat tech issues"], w: ["Fast-changing tech", "Sourcing genuine parts"], o: ["Glass/Screen insurance", "Used phone refurbishing"], t: ["Authorized service centers", "Disposable tech trends"] }, // Mobile Repair
+    48: { s: ["High margin", "Personal loyalty"], w: ["Staff dependency", "Sanitation costs"], o: ["Bridal packages", "Home service app tie-ups"], t: ["Premium franchise salons", "Local price wars"] }, // Salon
+    57: { s: ["Subscription income", "High retention"], w: ["High initial Capex", "Maintenance of gear"], o: ["Personal training", "Supplements sales"], t: ["Park workouts", "Low-cost competitors"] }, // Gym
+
+    // ONLINE (61-70)
+    61: { s: ["Low overheads", "Global reach"], w: ["Algorithm changes", "Portfolio dependency"], o: ["AI automation services", "Niche industry focus"], t: ["Free AI tools", "Freelance undercutting"] }, // Digital Mkt
+    64: { s: ["24/7 sales", "Scalability"], w: ["Platform fees", "Return logistics"], o: ["Private labeling", "International shipping"], t: ["Ad-cost inflation", "Platform bans"] }, // Ecom
+
+    // MANUFACTURING (81-95)
+    81: { s: ["Plastic ban benefit", "Bulk orders"], w: ["High power need", "Space for raw material"], o: ["Branded printing", "Export potential"], t: ["Raw paper price hikes", "New GST norms"] }, // Paper Cup
+    89: { s: ["High export value", "Purity trust"], w: ["Adulteration risk", "Packaging costs"], o: ["Organic spice range", "Ready-mix masalas"], t: ["National brands", "Crop failure/Prices"] }, // Spices
+
+    // STREET FOOD (101-108)
+    101: { s: ["Instant cash", "Iconic Mumbai brand"], w: ["Weather dependency", "Physical labor"], o: ["Event stalls", "Franchise modeling"], t: ["Municipal raids", "Hygiene perceptions"] }, // Vada Pav
+    104: { s: ["Lowest raw material cost", "High footfall"], w: ["Water quality trust", "Single-product risk"], o: ["Party catering", "Hygiene-certified brand"], t: ["Malls/Food courts", "Space eviction"] }, // Pani Puri
+
+    // NEW AGE (109-120)
+    109: { s: ["First mover advantage", "Govt push"], w: ["High setup cost", "Low current EV volume"], o: ["Cafe/Retail tie-ups", "Fleet management"], t: ["Battery swap tech", "Electricity tariff changes"] }, // EV Station
+    113: { s: ["Pesticide-free", "Premium pricing"], w: ["Technical knowledge needed", "Power dependency"], o: ["Direct-to-consumer app", "Exotic greens (Kale/Bok Choy)"], t: ["Traditional farm prices", "Water quality issues"] } // Hydroponics
+};
+
+// Helper to fill in the gaps for all 120 categories
+function getBizSwot(id, category) {
+    if (BIZ_SWOT_DATA[id]) return BIZ_SWOT_DATA[id];
+
+    // Defaults based on Category if specific ID is missing
+    const fallbacks = {
+        'Retail': { s: ["Physical touch/feel", "Locality trust"], w: ["Inventory cost", "Fixed rent"], o: ["Home delivery", "Loyalty points"], t: ["Online competition", "Inflation"] },
+        'Food': { s: ["Cash flow", "Universal demand"], w: ["Perishable goods", "Staff issues"], o: ["Catering", "Online apps"], t: ["Health regulations", "Food cost"] },
+        'Manufacturing': { s: ["B2B scalability", "Asset value"], w: ["Labor management", "Power cost"], o: ["Exporting", "Automation"], t: ["Policy changes", "Raw materials"] },
+        'Service': { s: ["Low inventory", "High margin"], w: ["Staff dependent", "Hard to scale"], o: ["Subscriptions", "Referrals"], t: ["Aggregator apps", "DIY trends"] }
+    };
+    return fallbacks[category] || { s: ["Market demand"], w: ["Competition"], o: ["Growth"], t: ["Economy"] };
+}
+
+
+
+
 
 // --- MASTER HARDCODED CHART DATA (ALL 120+ CATEGORIES) ---
 // inc: [Net Profit%, Material/Stock Cost%, Running Ops%]
@@ -23560,61 +23614,49 @@ const MASTER_148_DB = {
 };
 
 function renderSwotAnalysis() {
-    let biz = database.find(b => b.id == document.getElementById("bizSelect").value);
-    let bizName = document.getElementById("bizSelect").selectedOptions[0].text;
-    document.getElementById("swotTitle").innerText = "SWOT Analysis: " + bizName;
+    let bizId = document.getElementById("bizSelect").value;
+    let biz = database.find(b => b.id == bizId);
     
-    let container = document.getElementById("swotContent");
-    container.innerHTML = ""; 
+    // Use the hardcoded data we created earlier
+    let swot = getBizSwot(bizId, biz.cat); 
 
-    let swotData;
+    document.getElementById("swotTitle").innerText = "Strategic SWOT: " + biz.name;
     
-    if (biz.cat === "Street Food") {
-        swotData = [
-            {l: "💪 Strength", v: "High daily cash rotation and zero dependence on credit sales."},
-            {l: "⚠️ Weakness", v: "Heavy physical labor required and high sensitivity to weather (rains)."},
-            {l: "🚀 Opportunity", v: "Potential to scale through catering for local events and parties."},
-            {l: "🔥 Threat", v: "Uncertainty of municipal rules and rising cost of raw materials (oil/gas)."}
-        ];
-    } else if (biz.cat === "Manufacturing") {
-        swotData = [
-            {l: "💪 Strength", v: "Scalable production capacity and high B2B order volumes."},
-            {l: "⚠️ Weakness", v: "High dependency on raw material price stability and labor skills."},
-            {l: "🚀 Opportunity", v: "Potential for global exports and government 'Make in India' subsidies."},
-            {l: "🔥 Threat", v: "Industrial power tariff hikes and machinery obsolescence."}
-        ];
-    } else if (biz.cat === "Agriculture") {
-        swotData = [
-            {l: "💪 Strength", v: "Essential commodity with non-discretionary demand and long-term asset value."},
-            {l: "⚠️ Weakness", v: "High biological risk (diseases) and high initial setup cost for infrastructure."},
-            {l: "🚀 Opportunity", v: "Integration with modern supply chains and health-conscious retail branding."},
-            {l: "🔥 Threat", v: "Fluctuations in Mandi prices and impact of sudden climate changes."}
-        ];
-    } else if (biz.cat === "Online") {
-        swotData = [
-            {l: "💪 Strength", v: "Global reach with zero inventory risk and extremely low physical overheads."},
-            {l: "⚠️ Weakness", v: "Total reliance on high-speed internet and high cost of digital customer acquisition."},
-            {l: "🚀 Opportunity", v: "Leveraging AI for automation and scaling via global freelance marketplaces."},
-            {l: "🔥 Threat", v: "Rapid shifts in search algorithms and low entry barrier for competitors."}
-        ];
-    } else { // DEFAULT FOR SERVICES (EV, Solar, Grooming, Healthcare, etc.)
-        swotData = [
-            {l: "💪 Strength", v: "Tangible business assets and strong recurring revenue through subscriptions/AMC."},
-            {l: "⚠️ Weakness", v: "High dependency on technical staff and large initial capital investment."},
-            {l: "🚀 Opportunity", v: "Expansion through corporate tie-ups and government green-energy incentives."},
-            {l: "🔥 Threat", v: "Intense local competition and changes in government regulatory policies."}
-        ];
-    }
-
-    // Generate the rows
-    swotData.forEach(item => {
-        container.innerHTML += `
-            <div class="data-row">
-                <div class="data-label" style="font-size:1.1rem;">${item.l}</div>
-                <div class="data-value" style="font-size:1.1rem; border-left: 2px solid #e2e8f0; padding-left: 15px;">${item.v}</div>
+    const container = document.getElementById("swotContent");
+    
+    // We use 'grid-container' to create the 4-box layout
+    container.innerHTML = `
+        <div class="grid-container">
+            <!-- card class provides the white background and padding -->
+            <div class="card" style="border-top:5px solid var(--success);">
+                <h3 style="color:var(--success); margin-bottom:15px;">💪 Strengths</h3>
+                <ul style="padding-left:20px; line-height:1.6;">
+                    ${swot.s.map(item => `<li>${item}</li>`).join('')}
+                </ul>
             </div>
-        `;
-    });
+
+            <div class="card" style="border-top:5px solid var(--danger);">
+                <h3 style="color:var(--danger); margin-bottom:15px;">⚠️ Weaknesses</h3>
+                <ul style="padding-left:20px; line-height:1.6;">
+                    ${swot.w.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div class="card" style="border-top:5px solid var(--accent);">
+                <h3 style="color:var(--accent); margin-bottom:15px;">🚀 Opportunities</h3>
+                <ul style="padding-left:20px; line-height:1.6;">
+                    ${swot.o.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div class="card" style="border-top:5px solid var(--warning);">
+                <h3 style="color:var(--warning); margin-bottom:15px;">🔥 Threats</h3>
+                <ul style="padding-left:20px; line-height:1.6;">
+                    ${swot.t.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
 }
 
     </script>

@@ -513,7 +513,156 @@ function checkBudget() {
     return true;
 }
 
+// --- MASTER HARDCODED CHART DATA (ALL 120+ CATEGORIES) ---
+// inc: [Net Profit%, Material/Stock Cost%, Running Ops%]
+// cap: [[Label, %], [Label, %], [Label, %], [Label, %]]
+const BIZ_CHART_DATA = {
+    // RETAIL (1-20)
+    1: { inc: [15, 75, 10], cap: [['Stock', 50], ['Racks', 30], ['Deposit', 20]] }, // Grocery
+    2: { inc: [35, 50, 15], cap: [['Stock', 50], ['Interior', 30], ['Deposit', 20]] }, // Apparel
+    3: { inc: [20, 70, 10], cap: [['Stock', 65], ['Display', 20], ['Security', 15]] }, // Mobile
+    4: { inc: [40, 45, 15], cap: [['Stock', 55], ['Racks', 25], ['Deposit', 20]] }, // Footwear
+    5: { inc: [18, 72, 10], cap: [['Stock', 70], ['Display', 15], ['Deposit', 15]] }, // Electronics
+    6: { inc: [45, 45, 10], cap: [['Stock', 50], ['Interior', 30], ['Deposit', 20]] }, // Cosmetics
+    7: { inc: [30, 60, 10], cap: [['Stock', 60], ['Racks', 25], ['Deposit', 15]] }, // Stationery
+    8: { inc: [50, 40, 10], cap: [['Stock', 50], ['Interior', 35], ['Deposit', 15]] }, // Gift
+    9: { inc: [60, 30, 10], cap: [['Stock', 45], ['Display', 40], ['Deposit', 15]] }, // Artificial Jewellery
+    10: { inc: [65, 20, 15], cap: [['Lenses', 30], ['Frames', 30], ['Equipment', 40]] }, // Optical
+    11: { inc: [25, 65, 10], cap: [['Stock', 70], ['Racks', 15], ['Deposit', 15]] }, // Hardware
+    12: { inc: [35, 55, 10], cap: [['Stock', 60], ['Interior', 20], ['Deposit', 20]] }, // Utensils
+    13: { inc: [40, 50, 10], cap: [['Stock', 60], ['Display', 25], ['Deposit', 15]] }, // Toys
+    14: { inc: [35, 55, 10], cap: [['Stock', 60], ['Interior', 25], ['Deposit', 15]] }, // Sports
+    15: { inc: [40, 45, 15], cap: [['Showroom', 40], ['Stock', 40], ['Deposit', 20]] }, // Furniture
+    16: { inc: [45, 45, 10], cap: [['Stock', 55], ['Racks', 25], ['Deposit', 20]] }, // Bags
+    17: { inc: [50, 40, 10], cap: [['Stock', 55], ['Display', 30], ['Deposit', 15]] }, // Watch
+    18: { inc: [35, 50, 15], cap: [['Stock', 50], ['Cages/Setup', 30], ['Deposit', 20]] }, // Pet Shop
+    19: { inc: [60, 30, 10], cap: [['Decor', 40], ['Fridges', 30], ['First Stock', 30]] }, // Florist
+    20: { inc: [25, 65, 10], cap: [['Stock', 60], ['Fridge/Racks', 25], ['Deposit', 15]] }, // Pharmacy
 
+    // FOOD & BEVERAGE (21-40)
+    21: { inc: [60, 25, 15], cap: [['Stall', 40], ['Utensils', 20], ['Advance', 40]] }, // Tea
+    22: { inc: [35, 30, 35], cap: [['Kitchen', 40], ['Interior', 40], ['Deposit', 20]] }, // Cafe
+    23: { inc: [55, 25, 20], cap: [['Kitchen', 60], ['Packaging', 20], ['License', 20]] }, // Cloud Kitchen
+    24: { inc: [50, 30, 20], cap: [['Ovens/Machinery', 50], ['Display', 30], ['Deposit', 20]] }, // Bakery
+    25: { inc: [55, 25, 20], cap: [['Kitchen', 45], ['Interior', 35], ['Deposit', 20]] }, // Fast Food
+    26: { inc: [40, 45, 15], cap: [['Tiffin Boxes', 30], ['Kitchen', 50], ['Marketing', 20]] }, // Tiffin
+    27: { inc: [60, 25, 15], cap: [['Juicers', 40], ['Counter', 30], ['Advance', 30]] }, // Juice
+    28: { inc: [50, 35, 15], cap: [['Freezers', 60], ['Counter', 20], ['Deposit', 20]] }, // Ice Cream
+    29: { inc: [45, 40, 15], cap: [['Kitchen', 50], ['Display', 30], ['Deposit', 20]] }, // Sweets
+    30: { inc: [55, 25, 20], cap: [['Vehicle Setup', 70], ['Kitchen', 20], ['License', 10]] }, // Food Truck
+    31: { inc: [40, 40, 20], cap: [['Utensils', 50], ['Gas/Burners', 30], ['Uniforms', 20]] }, // Catering
+    32: { inc: [35, 55, 10], cap: [['Stock', 60], ['Racks', 20], ['Deposit', 20]] }, // Organic
+    33: { inc: [30, 65, 5], cap: [['Stock', 75], ['Display', 15], ['Deposit', 10]] }, // Dry Fruits
+    34: { inc: [40, 50, 10], cap: [['Stock', 60], ['Grinders', 20], ['Deposit', 20]] }, // Spices
+    35: { inc: [50, 40, 10], cap: [['Bottling', 40], ['Materials', 40], ['Labels', 20]] }, // Pickle
+    36: { inc: [40, 50, 10], cap: [['Stock', 60], ['Racks', 25], ['Deposit', 15]] }, // Namkeen
+    37: { inc: [30, 60, 10], cap: [['Racks/Crates', 40], ['Deposit', 40], ['Weighing', 20]] }, // Veg Shop
+    38: { inc: [35, 55, 10], cap: [['Cold Storage', 50], ['Counters', 30], ['Deposit', 20]] }, // Meat Shop
+    39: { inc: [60, 30, 10], cap: [['Counter', 60], ['First Stock', 30], ['Misc', 10]] }, // Pan Shop
+    40: { inc: [50, 20, 30], cap: [['Vehicle', 50], ['Bottles/Jars', 40], ['License', 10]] }, // Water
+
+    // SERVICES (41-60)
+    41: { inc: [70, 15, 15], cap: [['Tools', 40], ['Spare Parts', 30], ['Shop', 30]] }, // Mobile Repair
+    42: { inc: [75, 10, 15], cap: [['Vacuum/Tools', 60], ['Gas Kits', 30], ['Marketing', 10]] }, // AC Service
+    43: { inc: [80, 10, 10], cap: [['Toolkits', 70], ['Transport', 20], ['Adv', 10]] }, // Plumber
+    44: { inc: [60, 10, 30], cap: [['Machines', 50], ['Chemicals', 20], ['Marketing', 30]] }, // Cleaning
+    45: { inc: [70, 15, 15], cap: [['Sprayers', 40], ['Chemicals', 30], ['License', 30]] }, // Pest Control
+    46: { inc: [60, 10, 30], cap: [['Wash System', 60], ['Deposit', 30], ['Taxes', 10]] }, // Car Wash
+    47: { inc: [50, 15, 35], cap: [['Washing Machines', 60], ['Ironing', 20], ['Deposit', 20]] }, // Laundry
+    48: { inc: [65, 10, 25], cap: [['Chairs/Decor', 50], ['Products', 20], ['Deposit', 30]] }, // Salon
+    49: { inc: [70, 10, 20], cap: [['Machines', 40], ['Interiors', 30], ['Deposit', 30]] }, // Tailoring
+    50: { inc: [40, 30, 30], cap: [['Marketing', 40], ['Office', 30], ['Materials', 30]] }, // Events
+    51: { inc: [30, 10, 60], cap: [['Office', 50], ['IT/Systems', 30], ['Ads', 20]] }, // Travel
+    52: { inc: [25, 10, 65], cap: [['Vehicle/Bikes', 40], ['Office', 40], ['Deposit', 20]] }, // Courier
+    53: { inc: [85, 2, 13], cap: [['Marketing', 60], ['Office', 30], ['Misc', 10]] }, // Real Estate
+    54: { inc: [20, 2, 78], cap: [['Uniforms', 30], ['Legal/License', 40], ['Office', 30]] }, // Security
+    55: { inc: [35, 15, 50], cap: [['Vehicles', 80], ['Permits', 15], ['Tech', 5]] }, // Taxi
+    56: { inc: [40, 10, 50], cap: [['Bikes Stock', 80], ['Maintenance', 10], ['Deposit', 10]] }, // Bike Rental
+    57: { inc: [50, 5, 45], cap: [['Gym Equipment', 75], ['Interior', 15], ['Deposit', 10]] }, // Gym
+    58: { inc: [80, 5, 15], cap: [['Interior', 50], ['Mats/Props', 20], ['Deposit', 30]] }, // Yoga
+    59: { inc: [70, 10, 20], cap: [['Portfolio/Ads', 40], ['Office', 40], ['Software', 20]] }, // Interiors
+    60: { inc: [50, 30, 20], cap: [['Xerox Machines', 60], ['Stock/Paper', 20], ['Deposit', 20]] }, // Xerox
+
+    // ONLINE / DIGITAL (61-70)
+    61: { inc: [80, 5, 15], cap: [['Systems', 40], ['Digital Marketing', 40], ['Software', 20]] },
+    62: { inc: [90, 2, 8], cap: [['Graphics PC', 60], ['Licenses', 30], ['Ads', 10]] },
+    63: { inc: [95, 1, 4], cap: [['Laptop', 60], ['Marketing', 30], ['Misc', 10]] },
+    64: { inc: [30, 50, 20], cap: [['Inventory', 60], ['Marketing', 25], ['Packaging', 15]] },
+    65: { inc: [20, 10, 70], cap: [['Ads', 70], ['Website', 20], ['Software', 10]] },
+    66: { inc: [90, 2, 8], cap: [['Camera/Gear', 60], ['PC Editing', 30], ['Studio', 10]] },
+    67: { inc: [80, 5, 15], cap: [['Systems', 50], ['Marketing', 30], ['Rent/Cloud', 20]] },
+    68: { inc: [80, 5, 15], cap: [['Systems', 40], ['Ads', 40], ['Server Costs', 20]] },
+    69: { inc: [70, 10, 20], cap: [['Gear/Camera', 50], ['Travel/Outfits', 40], ['Ads', 10]] },
+    70: { inc: [90, 2, 8], cap: [['Tablet/System', 50], ['Marketing', 40], ['Zoom/LMS', 10]] },
+
+    // EDUCATION (71-80)
+    71: { inc: [85, 5, 10], cap: [['Furniture', 40], ['Marketing', 30], ['Deposit', 30]] },
+    72: { inc: [80, 10, 10], cap: [['Lab/Systems', 40], ['Interior', 40], ['Marketing', 20]] },
+    73: { inc: [70, 10, 20], cap: [['Marketing', 50], ['Interior', 30], ['Deposit', 20]] },
+    74: { inc: [80, 15, 5], cap: [['Supplies', 50], ['Decor', 30], ['Ads', 20]] },
+    75: { inc: [40, 10, 50], cap: [['Play Equipment', 40], ['Interior', 40], ['Deposit', 20]] },
+    76: { inc: [50, 15, 35], cap: [['Machines/Tools', 60], ['Interior', 20], ['Deposit', 20]] },
+    77: { inc: [60, 5, 35], cap: [['Computers', 70], ['Interior', 15], ['Deposit', 15]] },
+    78: { inc: [80, 5, 15], cap: [['Instruments', 60], ['Acoustics', 20], ['Deposit', 20]] },
+    79: { inc: [70, 5, 25], cap: [['Flooring/Mirror', 50], ['Music System', 20], ['Deposit', 30]] },
+    80: { inc: [80, 10, 10], cap: [['Easel/Supply', 50], ['Lighting', 20], ['Deposit', 30]] },
+
+    // MANUFACTURING (81-95)
+    81: { inc: [20, 60, 20], cap: [['Machine', 70], ['Paper Stock', 20], ['Power', 10]] },
+    82: { inc: [20, 60, 20], cap: [['Die Machine', 70], ['Paper Stock', 20], ['Taxes', 10]] },
+    83: { inc: [40, 50, 10], cap: [['Wax/Molds', 60], ['Packaging', 20], ['Setup', 20]] },
+    84: { inc: [35, 45, 20], cap: [['Mixing Unit', 60], ['Raw Chem', 20], ['License', 20]] },
+    85: { inc: [30, 50, 20], cap: [['Packaging Machine', 50], ['Chemicals', 30], ['Misc', 20]] },
+    86: { inc: [35, 50, 15], cap: [['Drying Trays', 40], ['Raw Material', 40], ['Labor Setup', 20]] },
+    87: { inc: [25, 60, 15], cap: [['Cutting Machine', 70], ['Paper Stock', 20], ['Misc', 10]] },
+    88: { inc: [35, 45, 20], cap: [['Strap/Sole Machine', 60], ['Stock', 30], ['License', 10]] },
+    89: { inc: [30, 50, 20], cap: [['Grinding Unit', 65], ['Raw Spices', 25], ['Packing', 10]] },
+    90: { inc: [25, 60, 15], cap: [['Mill Unit', 70], ['Grains', 20], ['Licensing', 10]] },
+    91: { inc: [30, 50, 20], cap: [['Expeller Machine', 70], ['Seeds Stock', 20], ['Bottles', 10]] },
+    92: { inc: [25, 55, 20], cap: [['Stitching Units', 60], ['Fabric Stock', 30], ['Misc', 10]] },
+    93: { inc: [30, 50, 20], cap: [['Wood Tools', 60], ['Wood Stock', 30], ['Workshop', 10]] },
+    94: { inc: [20, 65, 15], cap: [['Box Machines', 70], ['Board Stock', 20], ['License', 10]] },
+    95: { inc: [15, 70, 15], cap: [['Fabric Machines', 70], ['Material', 20], ['Setup', 10]] },
+
+    // AGRICULTURE (96-100)
+    96: { inc: [40, 40, 20], cap: [['Cattle', 70], ['Shed Setup', 20], ['Feeders', 10]] },
+    97: { inc: [35, 45, 20], cap: [['Chicks/Birds', 40], ['Cages', 40], ['Feed Setup', 20]] },
+    98: { inc: [45, 40, 15], cap: [['Livestock', 75], ['Shed', 15], ['Health/Vaccine', 10]] },
+    99: { inc: [60, 20, 20], cap: [['Shelving', 40], ['Spawns/Soil', 30], ['Climate Unit', 30]] },
+    100: { inc: [50, 30, 20], cap: [['Plants Stock', 50], ['Pots/Soil', 30], ['Land Setup', 20]] },
+
+    // STREET FOOD (101-108)
+    101: { inc: [50, 40, 10], cap: [['Custom Cart', 75], ['First Stock', 15], ['Gas System', 10]] }, // Vada Pav
+    102: { inc: [60, 30, 10], cap: [['Tea Cart', 80], ['Milk/Leaf', 15], ['Cups', 5]] }, // Roadside Tea
+    103: { inc: [55, 35, 10], cap: [['Grill/Toaster', 40], ['Cart', 40], ['Stock', 20]] }, // Sandwich
+    104: { inc: [65, 25, 10], cap: [['Stainless Cart', 70], ['Stock', 20], ['Misc', 10]] }, // Pani Puri
+    105: { inc: [50, 40, 10], cap: [['Dosa Tawa', 40], ['Cart', 40], ['Batter Stock', 20]] }, // Dosa
+    106: { inc: [55, 35, 10], cap: [['Burner/Cart', 60], ['Raw Meat/Veg', 30], ['Misc', 10]] }, // Frankie
+    107: { inc: [50, 40, 10], cap: [['Cart', 70], ['First Stock', 20], ['Gas/Misc', 10]] }, // Dabeli
+    108: { inc: [60, 30, 10], cap: [['Cycle/Cart', 70], ['Steam Unit', 20], ['Stock', 10]] }, // Idli
+
+    // SPECIALIZED / MODERN (109-120)
+    109: { inc: [25, 5, 70], cap: [['Charger Units', 80], ['Wiring/Tech', 15], ['Permissions', 5]] }, // EV
+    110: { inc: [35, 55, 10], cap: [['Stock', 60], ['Interior', 25], ['Deposit', 15]] }, // Millet
+    111: { inc: [35, 15, 50], cap: [['Van Setup', 70], ['Grooming Gear', 20], ['Marketing', 10]] }, // Pet Grooming
+    112: { inc: [25, 60, 15], cap: [['Panels Stock', 70], ['Marketing', 20], ['Tools', 10]] }, // Solar
+    113: { inc: [40, 30, 30], cap: [['Tech/Pipes', 60], ['Seeds/Nutrients', 20], ['Greenhouse', 20]] }, // Hydro
+    114: { inc: [30, 5, 65], cap: [['Interior/Desks', 50], ['Deposit', 40], ['IT/Wifi', 10]] }, // Coworking
+    115: { inc: [20, 5, 75], cap: [['Logistics', 50], ['License', 40], ['Tools', 10]] }, // E-Waste
+    116: { inc: [50, 20, 30], cap: [['3D Printers', 70], ['Filament', 20], ['PC Gear', 10]] }, // 3D Print
+    117: { inc: [30, 5, 65], cap: [['Staffing/Ads', 60], ['Medical Gear', 30], ['Licensing', 10]] }, // Home Health
+    118: { inc: [25, 60, 15], cap: [['Machines', 80], ['First Stock', 10], ['App Setup', 10]] }, // Vending
+    119: { inc: [20, 70, 10], cap: [['Components', 70], ['Tools', 20], ['Shop', 10]] }, // Custom PC
+    120: { inc: [70, 5, 25], cap: [['Systems', 50], ['Licenses', 30], ['Ads', 20]] }  // Cloud Interior
+};
+
+// Helper function to fetch data or provide a safe generic default
+function getBizChartConfig(id, category) {
+    if (BIZ_CHART_DATA[id]) return BIZ_CHART_DATA[id];
+    
+    // Generic Default Fallback
+    return { inc: [40, 40, 20], cap: [['Equipment', 40], ['Stock', 30], ['Infrastructure', 30]] };
+}
 
 
 
@@ -858,63 +1007,43 @@ function renderBusinessFacts() {
 
             renderDetailedReport(biz, adjInv, adjOp, tier, stateName, budget);
 
-// --- DYNAMIC GOOGLE CHARTS LOGIC ---
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(() => {
-        
-        // 1. Monthly Wallet Split (Profit vs Expenses)
-        let monthlyRevenue = adjOp * 4;
-        var data1 = google.visualization.arrayToDataTable([
-            ['Type', 'Rupees'],
-            ['Net Profit', profit],
-            ['Running Costs', adjOp * 3] // Total expenses including stock/rent/salaries
-        ]);
+// --- DYNAMIC GOOGLE CHARTS LOGIC (REFINED) ---
+// INSIDE generateAnalysis function...
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(() => {
+    const config = getBizChartConfig(biz.id, biz.cat);
+    let rev = adjOp * 4;
 
-        var chart1 = new google.visualization.PieChart(document.getElementById('monthlyChart'));
-        chart1.draw(data1, {
-            pieHole: 0.4,
-            colors: ['#10b981', '#f43f5e'],
-            legend: {position: 'bottom'},
-            chartArea: {width:'90%', height:'80%'}
-        });
+    // 1. Profit vs Materials vs Ops
+    var data1 = google.visualization.arrayToDataTable([
+        ['Type', 'Rupees'],
+        ['Net Profit', (rev * (config.inc[0]/100))],
+        ['Product/Material Cost', (rev * (config.inc[1]/100))],
+        ['Operating Bills', (rev * (config.inc[2]/100))]
+    ]);
 
-        // 2. Capital Allocation (Where the investment goes)
-        // We use percentages of total adjInv
-       // 2. Smart Capital Allocation (Checks if Street Food or Shop)
-        let allocationData;
-
-        if (biz.cat === "Street Food") {
-            allocationData = [
-                ['Asset', 'Rupees'],
-                ['Custom Fabricated Cart', Math.round(adjInv * 0.60)],
-                ['Raw Material Stock', Math.round(adjInv * 0.15)],
-                ['Branding & Signage', Math.round(adjInv * 0.15)],
-                ['Utensils & Tools', Math.round(adjInv * 0.05)],
-                ['Local Permits', Math.round(adjInv * 0.05)]
-            ];
-        } else {
-            allocationData = [
-                ['Asset', 'Rupees'],
-                ['Equipment/Machines', Math.round(adjInv * 0.40)],
-                ['Rental Deposit', Math.round(adjInv * 0.20)],
-                ['Opening Stock', Math.round(adjInv * 0.20)],
-                ['Interior/Civil', Math.round(adjInv * 0.15)],
-                ['Licenses/Legal', Math.round(adjInv * 0.05)]
-            ];
-        }
-
-        var data2 = google.visualization.arrayToDataTable(allocationData);
-
-        var chart2 = new google.visualization.PieChart(document.getElementById('investmentChart'));
-       chart2.draw(data2, {
-            is3D: true,
-            // UPDATED COLORS: Blue, Green, Red, Yellow, Orange
-            colors: ['#2563eb', '#10b981', '#ef4444', '#f59e0b', '#f97316'], 
-            legend: {position: 'bottom'},
-            chartArea: {width:'90%', height:'80%'}
-        });
+    var chart1 = new google.visualization.PieChart(document.getElementById('monthlyChart'));
+    chart1.draw(data1, {
+        pieHole: 0.4,
+        colors: ['#10b981', '#f43f5e', '#3b82f6'],
+        legend: {position: 'bottom', textStyle: {fontSize: 10}}
     });
-        }
+
+    // 2. Breakdown of Capital
+    let allocationArray = [['Asset', 'Rupees']];
+    config.cap.forEach(item => {
+        allocationArray.push([item[0], (adjInv * (item[1]/100))]);
+    });
+
+    var data2 = google.visualization.arrayToDataTable(allocationArray);
+    var chart2 = new google.visualization.PieChart(document.getElementById('investmentChart'));
+    chart2.draw(data2, {
+        is3D: true,
+        colors: ['#2563eb', '#10b981', '#f59e0b', '#ef4444'], 
+        legend: {position: 'bottom', textStyle: {fontSize: 10}}
+    });
+});
+}
         // 4. FINDER
         function runFinder() {
 if(!checkBudget()) return; // <--- Add this line at the top

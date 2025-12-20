@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BMX10 | AI Business Master Engine</title>
+<link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -119,6 +120,85 @@
             justify-content: center;
             vertical-align: middle;
         }
+/* --- PWA INSTALL BUTTON --- */
+#installBtn {
+    display: none; /* Hidden by default, shown via JS if app can be installed */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #1877F2; /* Facebook Blue */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.3s ease;
+}
+#installBtn:hover { transform: scale(1.1); background-color: #166fe5; }
+#installBtn:active { transform: scale(0.95); }
+
+/* --- MOBILE UI OPTIMIZER (REDUCE GAPS) --- */
+@media (max-width: 768px) {
+    /* Reduce the main outer padding */
+    .main-content { 
+        padding: 15px !important; 
+    }
+
+    /* Tighten the header space */
+    .header-panel { 
+        margin-bottom: 15px !important; 
+        padding-bottom: 10px !important; 
+    }
+
+    /* Reduce gaps between cards and boxes */
+    .grid-container { 
+        gap: 12px !important; 
+        margin-bottom: 15px !important; 
+    }
+
+    /* Make cards less bulky */
+    .card { 
+        padding: 15px !important; 
+    }
+
+    /* Tighten the 148-point detailed report */
+    .report-section-wrapper { 
+        padding: 15px !important; 
+        margin-top: 15px !important; 
+    }
+
+    .section-block { 
+        margin-bottom: 20px !important; 
+        padding-left: 12px !important; 
+    }
+
+    .section-title { 
+        font-size: 1.1rem !important; 
+        margin-bottom: 10px !important; 
+    }
+
+    /* Reduce spacing in the data rows (Point 1-148) */
+    .data-row { 
+        margin-bottom: 8px !important; 
+        padding-bottom: 8px !important; 
+    }
+
+    /* Fix SWOT cards on mobile */
+    #swotContent .grid-container {
+        grid-template-columns: 1fr !important; /* Forces 1 card per row on mobile */
+    }
+
+    /* Make text slightly smaller to fit screen */
+    .brand { font-size: 1.5rem !important; }
+    .score-val { font-size: 2.2rem !important; }
+}
     </style>
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
@@ -636,7 +716,40 @@
 
     <!-- APP LOGIC -->
     <script>
+// This variable stays at the top
+let deferredPrompt;
 
+// Wrap everything in a listener to make sure the HTML is ready
+window.addEventListener('DOMContentLoaded', () => {
+    const installBtn = document.getElementById('installBtn');
+
+    // 1. Listen for the phone saying "I am ready to install"
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); 
+        deferredPrompt = e;
+        // Now it is safe to show the button
+        if (installBtn) installBtn.style.display = 'flex'; 
+    });
+
+    // 2. Click logic
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+    }
+});
+
+// 3. Register Service Worker (Keep this outside)
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => console.log("SW error", err));
+}
 
 // --- 0. STATE ECONOMIC MULTIPLIERS (New Addition) ---
 const stateRates = {
@@ -23865,5 +23978,8 @@ function renderSwotAnalysis() {
 }
 
     </script>
+<button id="installBtn">
+    <span style="font-size:1.4rem;">📥</span> INSTALL APP
+</button>
 </body>
 </html>

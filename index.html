@@ -144,62 +144,73 @@
 #installBtn:hover { transform: scale(1.1); background-color: #166fe5; }
 #installBtn:active { transform: scale(0.95); }
 
-/* --- MOBILE LAYOUT TIGHTENER (SECTION A TO Q) --- */
+/* --- AGGRESSIVE MOBILE GAP FIX (A TO Q) --- */
 @media (max-width: 768px) {
-    /* 1. Reduce space around the whole report container */
-    .report-section-wrapper {
-        margin-top: 10px !important;
-        padding: 12px !important;
+    /* 1. Nuke the top gap of the whole report container */
+    #detailedReport.report-section-wrapper {
+        margin-top: 0 !important;
+        padding: 10px !important;
+        border: none !important;
+        background: transparent !important; /* Removes bulky white background */
+    }
+
+    /* 2. Tighten Section Blocks (A, B, C...) */
+    .section-block {
+        margin-bottom: 10px !important; /* Reduced from 40px */
+        margin-top: 0 !important;
+        padding-top: 5px !important;
+        padding-left: 8px !important;
+        border-left: 2px solid var(--accent) !important; /* Thinner line */
+        background: white !important; /* Give individual sections white bg instead */
+        padding: 10px !important;
         border-radius: 8px !important;
     }
 
-    /* 2. Tighten each Section Block (A, B, C...) */
-    .section-block {
-        margin-bottom: 15px !important; /* Reduced from 40px */
-        padding-left: 10px !important; /* Reduced from 20px */
-        border-left: 3px solid var(--border) !important;
-    }
-
-    /* 3. Reduce space around Section Titles */
+    /* 3. Remove Title Gaps */
     .section-title {
-        font-size: 1rem !important;
-        margin-bottom: 8px !important;
-        padding-bottom: 5px !important;
-        line-height: 1.2 !important;
+        font-size: 0.95rem !important;
+        margin-top: 0 !important;
+        margin-bottom: 5px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
     }
 
-    /* 4. TIGHTEN DATA ROWS (Point 1-148) */
+    /* 4. TIGHTEN THE DATA ROWS (Points 1-148) */
     .data-row {
-        flex-direction: column !important; /* Stacked */
-        margin-bottom: 6px !important;    /* Reduced from 12px */
-        padding-bottom: 6px !important;   /* Reduced from 12px */
+        display: block !important; /* Switch from flex to block to save vertical space */
+        margin: 0 !important;
+        padding: 4px 0 !important; /* Tiny vertical space between point 1 and 2 */
         border-bottom: 1px solid #f1f5f9 !important;
+        min-height: 0 !important; /* Crucial: removes any forced height */
     }
 
-    /* 5. Close the gap between Label (Question) and Value (Answer) */
+    /* 5. Force Question and Answer to be on the same line if short, or tight if long */
     .data-label {
-        font-size: 0.8rem !important;
-        margin-bottom: 2px !important; /* Tiny gap before the answer */
-        color: #64748b !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.02em !important;
-        width: 100% !important;
-        flex: none !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        color: #94a3b8 !important;
+        margin-bottom: 0 !important;
+        display: inline-block !important; /* Makes it sit closer to value */
+        width: auto !important;
     }
 
     .data-value {
-        font-size: 0.9rem !important;
-        line-height: 1.4 !important;
-        font-weight: 600 !important;
-        color: var(--primary) !important;
+        font-size: 0.85rem !important;
+        line-height: 1.2 !important;
+        margin-top: -2px !important; /* Pulls value up into the label */
+        display: block !important;
         padding-left: 0 !important;
     }
 
-    /* 6. Fix the Section Codes (The [A], [B] badges) */
-    .section-code {
-        font-size: 0.75rem !important;
-        padding: 2px 6px !important;
-        margin-right: 5px !important;
+    /* 6. Remove the gap from the PREVIOUS section (Timeline) */
+    #timelineList, .timeline {
+        margin-bottom: 5px !important;
+    }
+    
+    .card {
+        margin-bottom: 10px !important; /* Tightens all cards before Section A */
+        padding: 12px !important;
     }
 }
     </style>
